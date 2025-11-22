@@ -1,0 +1,1379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>FitZone - Catalogue</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet"/>
+    <style>
+        /* Black & White theme base */
+        :root{ --sidebar-width: 200px; --topbar-height: 60px; }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #fff; /* white background for cards */
+            color: #000;
+            margin: 0;
+            padding-left: var(--sidebar-width);
+            padding-top: var(--topbar-height);
+        }
+
+        /* Top white navbar - FULL WIDTH with centered logo */
+        .topbar {
+            position: fixed;
+            top: 30px;
+            left: 0;
+            right: 0;
+            height: var(--topbar-height);
+            background: black;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 16px;
+            z-index: 1150;
+            border-bottom: 2px solid #000;
+        }
+
+        /* Centered round logo INSIDE the topbar */
+        .top-logo {
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1100;
+            border: 3px solid #000;
+            box-sizing: border-box;
+            padding: 0;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.5s ease;
+        }
+        .top-logo img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+
+        /* Logo popup animation */
+        .logo-popup {
+            position: fixed !important;
+            top: 50% !important;
+            left: 50% !important;
+            transform: translate(-50%, -50%) scale(3) !important;
+            width: 150px !important;
+            height: 150px !important;
+            z-index: 10000 !important;
+        }
+
+        /* Overlay for popup */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .overlay.active { 
+            opacity: 1;
+            visibility: visible;
+        }
+
+       
+       
+
+        /* Right side nav links in topbar */
+        .topbar .nav-right {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: nowrap;
+        }
+        .topbar .nav-right a { 
+            color: #fff; 
+            text-decoration: none; 
+            font-weight: 600; 
+            white-space: nowrap;
+            padding: 8px 16px;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+        .topbar .nav-right a:hover { 
+            background: #333; 
+        }
+        .topbar .nav-right a.active { 
+            background: #fff; 
+            color: #000; 
+        }
+        
+        /* Cart button needs relative positioning for badge */
+        .topbar .nav-right a[href="cart.html"] {
+            position: relative;
+        }
+        
+        /* Cart badge positioning - white square box */
+        .topbar .nav-right a[href="cart.html"] #cart-count {
+            position: absolute;
+            top: 0;
+            right: 0;
+            transform: translate(25%, -25%);
+            background: #fff;
+            color: #000;
+            border-radius: 3px;
+            padding: 2px 6px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            min-width: 18px;
+            text-align: center;
+            border: 1px solid #000;
+        }
+
+        /* Search bar styling */
+        .search-container {
+            display: flex;
+            align-items: center;
+            gap: 0;
+        }
+        .search-container input {
+            padding: 8px 12px;
+            border: 1px solid #fff;
+            background: #fff;
+            color: #000;
+            border-radius: 3px 0 0 3px;
+            height:35px;
+            width: 200px;
+            outline: none;
+        }
+        .search-container button {
+            padding: 8px 12px;
+            border: 1px solid #fff;
+            background: white;
+            color: #fff;
+            border-radius: 0 3px 3px 0;
+            cursor: pointer;
+            border-left: 1px solid black;
+            height:35px;
+            width:50px;
+        }
+        
+
+        /* Left fixed vertical sidebar with CATEGORY links */
+        .side-nav {
+            position: fixed;
+            top: var(--topbar-height);
+            left: 0;
+            margin-top: 0;
+            height: calc(100vh - var(--topbar-height) - 70px);
+            width: var(--sidebar-width);
+            background: white;
+            color:black;
+            z-index: 1100;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            padding: 40px 10px 20px 10px;
+            border-right: 2px solid #000;
+            overflow-y: auto;
+        }
+
+        .side-nav a, .side-nav button {
+            color:black;
+            background: transparent;
+            border: none;
+            text-decoration: none;
+            text-align: left;
+            width: 100%;
+            padding: 12px 8px;
+            margin: 4px 0;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .side-nav button.active { background: #fff !important; color: #000 !important; border-left: 3px solid #fff; }
+
+        /* Horizontal divider line */
+        .side-nav .divider {
+            width: calc(100% + 20px);
+            height: 2px;
+            background: #000;
+            margin: 5px -10px;
+            margin-top: 90px;
+        }
+
+        /* Home and Account buttons at bottom of sidebar */
+        .side-nav .home-btn,
+        .side-nav .account-btn {
+            background: #fff;
+            color: #000;
+            text-align: left;
+            padding: 15px 8px;
+            font-weight: bold;
+            border-radius: 4px;
+            width: 100%;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+            margin: 2px 0;
+        }
+        .side-nav .home-btn {
+            margin-top: auto;
+        }
+        .side-nav .home-btn:hover,
+        .side-nav .account-btn:hover {
+            background: #ddd;
+        }
+
+        /* Modal styles */
+        .modal {
+            position: fixed;
+            z-index: 10000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+        }
+        .modal-content {
+            background-color: #fff;
+            margin: 10% auto;
+            padding: 30px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+            border-radius: 8px;
+            position: relative;
+        }
+        .modal-content h2 {
+            margin-top: 0;
+            color: #000;
+        }
+        .modal-content p {
+            color: #000;
+            margin: 10px 0;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            position: absolute;
+            right: 20px;
+            top: 10px;
+        }
+        .close:hover,
+        .close:focus {
+            color: #000;
+        }
+
+        /* Remove ALL spacing between cards - zero gaps */
+        .container { padding: 0; margin: 0; max-width: 100%; }
+        .row { margin: 0; }
+        .col-md-3, .col-md-6 { padding: 10px; margin: 0; }
+        
+        /* Override any inline mt-* classes */
+        .product-tab .col-md-3, .product-tab .col-md-6 { margin-top: 0 !important; }
+
+        .product-card { 
+            background: #000 !important;
+            color: #fff !important;
+            margin: 0;
+            border: none;
+            box-sizing: border-box;
+            width: 250px;
+            height: 380px;
+            padding: 12px;
+            text-align: center;
+        }
+        .product-card img { width: 100%; height: 200px; object-fit: cover; display: block; }
+
+        /* Product grid: flush cards with no borders */
+        .product-tab { margin-top: 50px; padding-top: 50px; padding-left: 20px; padding-bottom: 80px; }
+        .product-tab .container { border: none; }
+        .product-tab .row { display: flex; flex-wrap: wrap; }
+        .product-tab .col-md-3 { flex: 0 0 25%; max-width: 25%; }
+        .product-tab .col-md-6 { flex: 0 0 50%; max-width: 50%; }
+
+        footer { 
+            background-color: #111; 
+            padding: 15px; 
+            text-align: center; 
+            color: #fff; 
+            margin: 0;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 1050;
+        }
+
+        /* Small screens - mobile responsive */
+        @media (max-width: 768px) {
+            :root { --sidebar-width: 0px; --topbar-height: 100px; }
+            body { padding-left: 0; padding-top: var(--topbar-height); }
+            
+            /* Hide sidebar on mobile */
+            .side-nav { display: none; }
+            
+            /* Adjust topbar for mobile */
+            .topbar { 
+                height: 100px;
+                padding: 10px;
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            /* Logo adjustments */
+            .top-logo { 
+                width: 60px; 
+                height: 60px; 
+                top: 5px;
+                position: relative;
+                left: 0;
+                transform: none;
+            }
+            .logo-name { 
+                display: none;
+            }
+            
+            /* Move search and cart to single row */
+            .topbar .nav-right {
+                position: static;
+                transform: none;
+                width: 100%;
+                justify-content: space-between;
+                padding: 0 10px;
+            }
+            
+            /* Search bar adjustments */
+            .search-container input {
+                width: 150px;
+                padding: 6px 8px;
+                font-size: 0.9rem;
+            }
+            .search-container button {
+                padding: 6px 8px;
+            }
+            
+            /* Cart button adjustments */
+            .topbar .nav-right a {
+                padding: 6px 12px;
+                font-size: 0.9rem;
+            }
+            
+            /* Cart count badge */
+            .topbar .nav-right a[href="cart.html"] #cart-count {
+                font-size: 0.65rem;
+                padding: 1px 4px;
+                min-width: 16px;
+            }
+            
+            /* Product cards - 2 columns on mobile */
+            .product-tab { 
+                padding: 10px;
+                margin-top: 20px;
+                padding-top: 20px;
+            }
+            .product-tab .col-md-3, .product-tab .col-md-6 { 
+                flex: 0 0 50%; 
+                max-width: 50%;
+                padding: 5px;
+            }
+            
+            /* Product cards smaller on mobile */
+            .product-card {
+                width: 100% !important;
+                height: auto !important;
+                min-height: 320px;
+            }
+            .product-card img {
+                height: 150px;
+            }
+            .product-card h3 {
+                font-size: 1rem;
+            }
+            .product-card h5 {
+                font-size: 0.85rem;
+            }
+            .product-card button {
+                font-size: 0.85rem;
+                padding: 6px 10px;
+            }
+            
+            /* Footer adjustments */
+            footer {
+                padding: 10px;
+                font-size: 0.85rem;
+            }
+            
+            /* Hide connector lines on mobile */
+            .logo-connector-left,
+            .logo-connector-right {
+                display: none;
+            }
+        }
+
+    </style>
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+    <!-- Overlay for logo popup -->
+    <div class="overlay" id="logoOverlay"></div>
+
+    <!-- Horizontal white connector lines (left and right of logo) -->
+    <div class="logo-connector-left"></div>
+    <div class="logo-connector-right"></div>
+
+    <!-- Top white navbar with centered logo -->
+    <header class="topbar" role="navigation">
+        <!-- Centered round logo -->
+        <div class="top-logo" id="logoElement" onclick="popupLogo()">
+            <img src="Fitzone.png" alt="FitZone logo">
+        </div>
+        <!-- Logo name under logo -->
+        <div class="logo-name">FitZone</div>
+
+        <!-- Right side nav links -->
+        <div class="nav-right">
+            <div class="search-container">
+                <input type="text" id="searchInput" placeholder="Search products...">
+                <button type="button">🔍</button>
+            </div>
+            <a href="cart.html" onclick="setActiveNav('cart')">Cart <span id="cart-count" class="badge badge-dark">0</span></a>
+        </div>
+    </header>
+
+    <!-- Left vertical sidebar with CATEGORY links -->
+    <aside class="side-nav" aria-label="Category navigation">
+        <button class="category-btn active" onclick="showCategory('dumbells')">Dumbells</button>
+        <button class="category-btn" onclick="showCategory('shoes')">Shoes</button>
+        <button class="category-btn" onclick="showCategory('smartwatch')">Smartwatches</button>
+        <button class="category-btn" onclick="showCategory('protein')">Protein</button>
+        <button class="category-btn" onclick="showCategory('gymbag')">Gymbags</button>
+        <button class="category-btn" onclick="showCategory('yogamat')">Yogamat</button>
+        
+        <!-- Horizontal line above Home button -->
+        <div class="divider"></div>
+        
+        <!-- Home and Account buttons at bottom of sidebar -->
+        <a href="index.html" class="home-btn">Home</a>
+        <button class="account-btn" onclick="openAccountModal()">Account</button>
+    </aside>
+
+    <!-- Account Modal -->
+    <div id="accountModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <span class="close" onclick="closeAccountModal()">&times;</span>
+            <h2>Account Information</h2>
+            <p>User: Guest</p>
+            <p>Email: guest@fitzone.com</p>
+            <button class="btn btn-dark" onclick="closeAccountModal()">Close</button>
+        </div>
+    </div>
+
+
+    
+    <div id="dumbells-container" class="product-tab flex-grow-1" style="display:block;">
+        <div class="container justify-content-lg-between">
+            
+            <div class="row">
+                <div class="col-md-3" style="text-align: center;">                    
+                <div class="product-card bg-dark text-light">
+                <img src="Dumbell1.png" width="150"/><br>
+                <h3 style="font-family: 'Times New Roman', Times, serif;">Hexa Dumbell</h3>
+                <h5 style="font-family: 'Times New Roman', Times, serif;">Weight: 1 Kg</h5>
+                <h5 style="font-family: 'Times New Roman', Times, serif;">Price: ₹299</h5>
+                
+
+                <button type="button" class="btn btn-dark" onclick="addToCart('Hexa Dumbell', '1 Kg', 299, 'https://rukminim2.flixcart.com/image/612/612/xif0q/dumbbell/z/r/w/pvc-dumbbell-1kg-0-5-jmb-original-imagge3wzhdgcggx.jpeg?q=70')">Add to Cart</button>
+                <button type="button" class="btn btn-dark" onclick="window.location.href='payment.html'">Buy now</button>
+            </div>
+            </div>
+
+                <div class="col-md-3" style="text-align: center;">
+                    <div class="product-card bg-dark text-light">
+                        <img src="Dumbell1.png" /><br>
+                        <h3 style="font-family: 'Times New Roman', Times, serif;">PVC Dumbell</h3>
+                        <h5 style="font-family: 'Times New Roman', Times, serif;">Weight:1 Kg</h5>
+                        <h5 style="font-family: 'Times New Roman', Times, serif;">Price:399</h5>
+                        <button type="button" class="btn btn-dark"onclick="addToCart('PVC Dumbell', '1 Kg', 399, 'https://rukminim2.flixcart.com/image/612/612/xif0q/dumbbell/9/i/o/pvc-dumbbell-set-2kg-x-2-pcs-1-pair-dumbbells-hex-dumbbells-home-original-imahyyxagmxdved8.jpeg?q=70')">Add to Cart</button>
+                        <button type="button" class="btn btn-dark" onclick="window.location.href='payment.html'">Buy now</button>
+                    </div>
+                </div>
+
+                <div class="col-md-3" style="text-align: center;">
+                    <div class="product-card bg-dark text-light">
+                        <img src="Untitled design (3).png" /><br>
+                        <h3 style="font-family: 'Times New Roman', Times, serif;">Vinyl Dumbell</h3>
+                        <h5 style="font-family: 'Times New Roman', Times, serif;">Weight:1 Kg</h5>
+                        <h5 style="font-family: 'Times New Roman', Times, serif;">Price:255</h5>
+                        <button type="button" class="btn btn-dark" onclick="addToCart('Vinyl Dumbell', '1 Kg', 255, 'https://rukminim2.flixcart.com/image/612/612/xif0q/dumbbell/3/u/v/vinyl-dumbbell-for-men-women-home-and-gym-full-body-workout-pack-original-imaghcb9fzhgruqd.jpeg?q=70')">Add to Cart</button>
+                        <button type="button" class="btn btn-dark" onclick="window.location.href='payment.html'">Buy now</button>
+                    </div>
+                </div>
+
+                <div class="col-md-3" style="text-align: center;">
+                    <div class="product-card bg-dark text-light">
+                        <img src="https://rukminim2.flixcart.com/image/612/612/xif0q/dumbbell/z/m/0/cast-iron-vinyl-coated-dumbbell-1-1-2-kg-1-griffin-original-imah6b9khyazrhve.jpeg?q=70" /><br>
+                        <h3 style="font-family: 'Times New Roman', Times, serif;">Iron Dumbell</h3>
+                        <h5 style="font-family: 'Times New Roman', Times, serif;">Weight:1 Kg</h5>
+                        <h5 style="font-family: 'Times New Roman', Times, serif;">Price:389</h5>
+                        <button type="button" class="btn btn-dark" onclick="addToCart('Iron Dumbell', '1 Kg', 389, 'https://rukminim2.flixcart.com/image/612/612/xif0q/dumbbell/z/m/0/cast-iron-vinyl-coated-dumbbell-1-1-2-kg-1-griffin-original-imah6b9khyazrhve.jpeg?q=70')">Add to Cart</button>
+                        <button type="button" class="btn btn-dark" onclick="window.location.href='payment.html'">Buy now</button>
+                    </div>
+                </div>
+
+                <div class="col-md-3" style="text-align: center;">
+                    <div class="product-card bg-dark text-light">
+                        <img src="https://rukminim2.flixcart.com/image/612/612/xif0q/dumbbell/f/w/l/dumbbells-set-for-home-gym-3-kg-set-of-2-fixed-weight-dumbbell-3-original-imah83vdfmqkgqsh.jpeg?q=70" /><br>
+                        <h3 style="font-family: 'Times New Roman', Times, serif;">BodyFit Dumbell</h3>
+                        <h5 style="font-family: 'Times New Roman', Times, serif;">Weight:1 Kg</h5>
+                        <h5 style="font-family: 'Times New Roman', Times, serif;">Price:399</h5>
+                        <button type="button" class="btn btn-dark" onclick="addToCart('BodyFit Dumbell', '1 Kg', 399, 'https://rukminim2.flixcart.com/image/612/612/xif0q/dumbbell/f/w/l/dumbbells-set-for-home-gym-3-kg-set-of-2-fixed-weight-dumbbell-3-original-imah83vdfmqkgqsh.jpeg?q=70')">Add to Cart</button>
+                        <button type="button" class="btn btn-dark" onclick="window.location.href='payment.html'">Buy now</button>
+                    </div>
+                </div>
+
+                <div class="col-md-3" style="text-align: center;">
+                    <div class="product-card bg-dark text-light">
+                        <img src="https://rukminim2.flixcart.com/image/612/612/xif0q/dumbbell/d/q/f/black-hexa-dumbbells-set-home-gym-6kg-6-bms-sports-original-imag99jzjnrt8hws.jpeg?q=70" /><br>
+                        <h3 style="font-family: 'Times New Roman', Times, serif;">BMS Dumbell</h3>
+                        <h5 style="font-family: 'Times New Roman', Times, serif;">Weight:2 Kg</h5>
+                        <h5 style="font-family: 'Times New Roman', Times, serif;">Price:406</h5>
+                        <button type="button" class="btn btn-dark" onclick="addToCart('BMS Dumbell', '2 Kg', 406, 'https://rukminim2.flixcart.com/image/612/612/xif0q/dumbbell/d/q/f/black-hexa-dumbbells-set-home-gym-6kg-6-bms-sports-original-imag99jzjnrt8hws.jpeg?q=70')">Add to Cart</button>
+                        <button type="button" class="btn btn-dark" onclick="window.location.href='payment.html'">Buy now</button>
+                    </div>
+                </div>
+
+                <div class="col-md-3" style="text-align: center;">
+    <div class="product-card bg-dark text-light">
+        <img src="https://rukminim2.flixcart.com/image/612/612/kjkbv680-0/dumbbell/v/o/7/pvc-dumbell-1-kg-pair-for-home-gym-exercise-1-hevv-original-imafz3k3mfdmnggx.jpeg?q=70" /><br>
+        <h3 style="font-family: 'Times New Roman', Times, serif;">Strax Dumbell</h3>
+        <h5 style="font-family: 'Times New Roman', Times, serif;">Weight:2 Kg</h5>
+        <h5 style="font-family: 'Times New Roman', Times, serif;">Price:424</h5>
+        <button type="button" class="btn btn-dark" onclick="addToCart('Strax Dumbell', '2 Kg', 424, 'https://rukminim2.flixcart.com/image/612/612/kjkbv680-0/dumbbell/v/o/7/pvc-dumbell-1-kg-pair-for-home-gym-exercise-1-hevv-original-imafz3k3mfdmnggx.jpeg?q=70')">Add to Cart</button>
+        <button type="button" class="btn btn-dark" onclick="window.location.href='payment.html'">Buy now</button>
+    </div>
+</div>
+
+                <div class="col-md-3" style="text-align: center;">
+    <div class="product-card bg-dark text-light">
+        <img src="https://rukminim2.flixcart.com/image/612/612/xif0q/dumbbell/y/l/v/2-kg-x-2-vinyl-coated-dumbell-for-gym-workout-2-kg-each-pair-red-original-imah44cftwtnzgd2.jpeg?q=70" /><br>
+        <h3 style="font-family: 'Times New Roman', Times, serif;">Staruss Dumbell</h3>
+        <h5 style="font-family: 'Times New Roman', Times, serif;">Weight:2 Kg</h5>
+        <h5 style="font-family: 'Times New Roman', Times, serif;">Price:589</h5>
+        <button type="button" class="btn btn-dark" onclick="addToCart('Staruss Dumbell', '2 Kg', 589, 'https://rukminim2.flixcart.com/image/612/612/xif0q/dumbbell/y/l/v/2-kg-x-2-vinyl-coated-dumbell-for-gym-workout-2-kg-each-pair-red-original-imah44cftwtnzgd2.jpeg?q=70')">Add to Cart</button>
+        <button type="button" class="btn btn-dark" onclick="window.location.href='payment.html'">Buy now</button>
+    </div>
+</div>
+     
+                <div class="col-md-3" style="text-align: center;">
+    <div class="product-card bg-dark text-light">
+        <img src="https://rukminim2.flixcart.com/image/612/612/xif0q/dumbbell/x/d/l/rubber-encased-strength-training-for-exercises-1-lyger-original-imahygy4sdtcrgjt.jpeg?q=70" /><br>
+        <h3 style="font-family: 'Times New Roman', Times, serif;">Lyger Dumbells</h3>
+        <h5 style="font-family: 'Times New Roman', Times, serif;">Weight:2 Kg</h5>
+        <h5 style="font-family: 'Times New Roman', Times, serif;">Price:470</h5>
+        <button type="button" class="btn btn-dark" onclick="addToCart('Lyger Dumbells', '2 Kg', 470, 'https://rukminim2.flixcart.com/image/612/612/xif0q/dumbbell/x/d/l/rubber-encased-strength-training-for-exercises-1-lyger-original-imahygy4sdtcrgjt.jpeg?q=70')">Add to Cart</button>
+        <button type="button" class="btn btn-dark" onclick="window.location.href='payment.html'">Buy now</button>
+    </div>
+</div>
+
+                <div class="col-md-3" style="text-align: center;">
+    <div class="product-card bg-dark text-light">
+        <img src="https://rukminim2.flixcart.com/image/612/612/xif0q/dumbbell/7/7/h/steel-dumbbell-set-4kg-x-2-pcs-1-pair-dumbbells-steel-dumbbells-original-imagt5tvucgtg3cn.jpeg?q=70"/><br>
+        <h3 style="font-family: 'Times New Roman', Times, serif;">Aman Dumbbells</h3>
+        <h5 style="font-family: 'Times New Roman', Times, serif;">Weight:5 Kg</h5>
+        <h5 style="font-family: 'Times New Roman', Times, serif;">Price:990</h5>
+        <button type="button" class="btn btn-dark" onclick="addToCart('Aman Dumbbells', '5 Kg', 990, 'https://rukminim2.flixcart.com/image/612/612/xif0q/dumbbell/7/7/h/steel-dumbbell-set-4kg-x-2-pcs-1-pair-dumbbells-steel-dumbbells-original-imagt5tvucgtg3cn.jpeg?q=70')">Add to Cart</button>
+        <button type="button" class="btn btn-dark" onclick="window.location.href='payment.html'">Buy now</button>
+    </div>
+</div>
+
+                <div class="col-md-3 " style="text-align: center;">
+    <div class="product-card bg-dark text-light">
+        <img src="https://rukminim2.flixcart.com/image/612/612/xif0q/dumbbell/a/j/a/pair-of-rubber-coated-bouncer-full-body-workout-set-of-2-5-original-imah6zzfmzxn8f6b.jpeg?q=70"/><br>
+        <h3 style="font-family: 'Times New Roman', Times, serif;">Yash Dumbell</h3>
+        <h5 style="font-family: 'Times New Roman', Times, serif;">Weight:5 Kg</h5>
+        <h5 style="font-family: 'Times New Roman', Times, serif;">Price:1059</h5>
+        <button type="button" class="btn btn-dark" onclick="addToCart('Yash Dumbell', '5 Kg', 1059, 'https://rukminim2.flixcart.com/image/612/612/xif0q/dumbbell/a/j/a/pair-of-rubber-coated-bouncer-full-body-workout-set-of-2-5-original-imah6zzfmzxn8f6b.jpeg?q=70')">Add to Cart</button>
+        <button type="button" class="btn btn-dark" onclick="window.location.href='payment.html'">Buy now</button>
+    </div>
+</div>
+
+                <div class="col-md-3" style="text-align: center;">
+                    <div class="product-card bg-dark text-light">
+                        <img src="https://rukminim2.flixcart.com/image/612/612/xif0q/dumbbell/p/c/h/pvc-dumbbell-set-5kg-x-2-pcs-1-pair-dumbbells-hex-dumbbells-original-imaggyyf3ygmfhfe.jpeg?q=70"/><br>
+                        <h3 style="font-family: 'Times New Roman', Times, serif;"style="font-family: 'Times New Roman', Times, serif;">Unique Dumbell</h3>
+                        <h5 style="font-family: 'Times New Roman', Times, serif;">Weight:5 Kg</h5>
+                        <h5 style="font-family: 'Times New Roman', Times, serif;">Price:988</h5>
+                        <button type="button" class="btn btn-dark" onclick="addToCart('Unique Dumbell', '5 Kg', 988, 'https://rukminim2.flixcart.com/image/612/612/xif0q/dumbbell/p/c/h/pvc-dumbbell-set-5kg-x-2-pcs-1-pair-dumbbells-hex-dumbbells-original-imaggyyf3ygmfhfe.jpeg?q=70')">Add to Cart</button>
+
+                        <button type="button" class="btn btn-dark" onclick="window.location.href='payment.html'">Buy now</button>
+                    </div>
+                </div>                          
+            </div>
+        </div>
+    </div>
+  
+
+
+    
+    <div id="shoes-container" class="product-tab" style="display:none;">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3" style="text-align: center;">
+    <div class="product-card bg-dark text-light">
+        <img src="https://rukminim2.flixcart.com/image/612/612/xif0q/shoe/i/d/y/6-cg-248-6-campus-blu-sky-original-imah4zpvb4erqq7y.jpeg?q=70"><br>
+        <h3 style="font-family: 'Times New Roman', Times, serif;">Birde Shoe</h3>
+        <h5 style="font-family: 'Times New Roman', Times, serif;">Price:980</h5>
+        <button type="button" class="btn btn-dark" onclick="addToCart('Birde Shoe', 'N/A', 980, 'https://rukminim2.flixcart.com/image/612/612/xif0q/shoe/i/d/y/6-cg-248-6-campus-blu-sky-original-imah4zpvb4erqq7y.jpeg?q=70')">Add to Cart</button>
+        <button type="button" class="btn btn-dark" onclick="window.location.href='payment.html'">Buy now</button>
+    </div>
+</div>
+                                   
+               <div class="col-md-3" style="text-align: center;">
+    <div class="product-card bg-dark text-light">
+        <img src="https://rukminim2.flixcart.com/image/612/612/xif0q/shoe/t/m/9/6-brd-sh-1399-6-birde-grey-original-imahauzgcnukncch.jpeg?q=70"><br>
+        <h3 style="font-family: 'Times New Roman', Times, serif;">Royece Shoe</h3>
+        <h5 style="font-family:'Times New Roman', Times, serif">Price:567</h5>
+        <button type="button" class="btn btn-dark" onclick="addToCart('Royece Shoe', 'N/A', 567, 'https://rukminim2.flixcart.com/image/612/612/xif0q/shoe/t/m/9/6-brd-sh-1399-6-birde-grey-original-imahauzgcnukncch.jpeg?q=70')">Add to Cart</button>
+        <button type="button" class="btn btn-dark" onclick="window.location.href='payment.html'">Buy now</button>
+    </div>
+</div>
+
+               <div class="col-md-3" style="text-align: center;">
+    <div class="product-card bg-dark text-light">
+        <img src="https://rukminim2.flixcart.com/image/612/612/xif0q/shoe/u/i/i/8-socks-04-8-density-full-grey-original-imagrszwqqztnqmm.jpeg?q=70"><br>
+        <h3 style="font-family: 'Times New Roman', Times, serif;">Birde Shoe</h3>
+        <h5 style="font-family:'Times New Roman', Times, serif">Price:780</h5>
+        <button type="button" class="btn btn-dark" onclick="addToCart('Birde Shoe', 'N/A', 780, 'https://rukminim2.flixcart.com/image/612/612/xif0q/shoe/u/i/i/8-socks-04-8-density-full-grey-original-imagrszwqqztnqmm.jpeg?q=70')">Add to Cart</button>
+        <button type="button" class="btn btn-dark" onclick="window.location.href='payment.html'">Buy now</button>
+    </div>
+</div>
+
+                <div class="col-md-3 " style="text-align: center;">
+    <div class="product-card bg-dark text-light">
+        <img src="https://rukminim2.flixcart.com/image/612/612/xif0q/shoe/h/9/i/6-gc0049-39-reebok-navy-original-imagtah6nacgxuxu.jpeg?q=70"><br>
+        <h3 style="font-family: 'Times New Roman', Times, serif;">Density Shoe</h3>
+        <h5 style="font-family:'Times New Roman', Times, serif">Price:765</h5>
+        <button type="button" class="btn btn-dark" onclick="addToCart('Density Shoe', 'N/A', 765, 'https://rukminim2.flixcart.com/image/612/612/xif0q/shoe/h/9/i/6-gc0049-39-reebok-navy-original-imagtah6nacgxuxu.jpeg?q=70')">Add to Cart</button>
+        <button type="button" class="btn btn-dark" onclick="window.location.href='payment.html'">Buy now</button>
+    </div>
+</div>
+            
+               <div class="col-md-3" style="text-align: center;">
+    <div class="product-card bg-dark text-light">
+        <img src="https://rukminim2.flixcart.com/image/612/612/xif0q/shoe/u/i/h/7-bis-rng-eva-842-blk-7-bruton-black-original-imahaxve36cy8d2f.jpeg?q=70"><br>
+        <h3 style="font-family: 'Times New Roman', Times, serif;">Reebook Shoe</h3>
+        <h5 style="font-family:'Times New Roman', Times, serif">Price:987</h5>
+        <button type="button" class="btn btn-dark" onclick="addToCart('Reebook Shoe', 'N/A', 987, 'https://rukminim2.flixcart.com/image/612/612/xif0q/shoe/u/i/h/7-bis-rng-eva-842-blk-7-bruton-black-original-imahaxve36cy8d2f.jpeg?q=70')">Add to Cart</button>
+        <button type="button" class="btn btn-dark" onclick="window.location.href='payment.html'">Buy now</button>
+    </div>
+</div>
+
+                <div class="col-md-3" style="text-align: center;">
+    <div class="product-card bg-dark text-light">
+        <img src="https://rukminim2.flixcart.com/image/612/612/xif0q/shoe/z/y/o/9-brd-1101-9-birde-navy-blue-original-imah7jt43wrsvf3e.jpeg?q=70"><br>
+        <h3 style="font-family: 'Times New Roman', Times, serif;">Bruton Shoe</h3>
+        <h5 style="font-family:'Times New Roman', Times, serif">Price:890</h5>
+        <button type="button" class="btn btn-dark" onclick="addToCart('Bruton Shoe', 'N/A', 890, 'https://rukminim2.flixcart.com/image/612/612/xif0q/shoe/z/y/o/9-brd-1101-9-birde-navy-blue-original-imah7jt43wrsvf3e.jpeg?q=70')">Add to Cart</button>
+        <button type="button" class="btn btn-dark" onclick="window.location.href='payment.html'">Buy now</button>
+    </div>
+</div>
+<div class="col-md-3 " style="text-align: center;">
+    <div class="product-card bg-dark text-light">
+        <img src="https://rukminim2.flixcart.com/image/612/612/xif0q/shoe/i/s/z/9-mrj2154-9-aadi-black-sky-original-imagpdhgv64bhjxw.jpeg?q=70"><br>
+        <h3 style="font-family: 'Times New Roman', Times, serif;">Aadi Shoe</h3>
+        <h5 style="font-family:'Times New Roman', Times, serif">Price:690</h5>
+        <button type="button" class="btn btn-dark" onclick="addToCart('Aadi Shoe', 'N/A', 690, 'https://rukminim2.flixcart.com/image/612/612/xif0q/shoe/i/s/z/9-mrj2154-9-aadi-black-sky-original-imagpdhgv64bhjxw.jpeg?q=70')">Add to Cart</button>
+        <button type="button" class="btn btn-dark" onclick="window.location.href='payment.html'">Buy now</button>
+    </div>
+</div>
+
+               <div class="col-md-3" style="text-align: center;">
+    <div class="product-card bg-dark text-light" style="height: 380px;width:250px">
+        <img src="https://rukminim2.flixcart.com/image/612/612/xif0q/shoe/1/k/n/7-rosy-1-lilac-pink-7-vokline-lalic-pink-original-imahargbxeszdujt.jpeg?q=70"><br>
+        <h3 style="font-family: 'Times New Roman', Times, serif;">ZenG Shoe</h3>
+        <h5 style="font-family:'Times New Roman', Times, serif">Price:798</h5>
+        <button type="button" class="btn btn-dark" onclick="addToCart('ZenG Shoe', 'N/A', 798, 'https://rukminim2.flixcart.com/image/612/612/xif0q/shoe/1/k/n/7-rosy-1-lilac-pink-7-vokline-lalic-pink-original-imahargbxeszdujt.jpeg?q=70')">Add to Cart</button>
+        <button type="button" class="btn btn-dark" onclick="window.location.href='payment.html'">Buy now</button>
+    </div>
+</div>
+           
+                <div class="col-md-3 " style="text-align: center;">
+    <div class="product-card bg-dark text-light" style="height: 380px;width:250px">
+        <img src="https://rukminim2.flixcart.com/image/612/612/xif0q/shoe/w/q/b/-original-imah9qyyvcgseckz.jpeg?q=70"><br>
+        <h3 style="font-family: 'Times New Roman', Times, serif;">Aadi Shoe</h3>
+        <h5 style="font-family:'Times New Roman', Times, serif">Price:699</h5>
+        <button type="button" class="btn btn-dark" onclick="addToCart('Aadi Shoe', 'N/A', 699, 'https://rukminim2.flixcart.com/image/612/612/xif0q/shoe/w/q/b/-original-imah9qyyvcgseckz.jpeg?q=70')">Add to Cart</button>
+        <button type="button" class="btn btn-dark" onclick="window.location.href='payment.html'">Buy now</button>
+    </div>
+</div>
+
+                <div class="col-md-3" style="text-align: center;">
+    <div class="product-card bg-dark text-light" style="height: 380px;width:250px">
+        <img src="https://rukminim2.flixcart.com/image/612/612/xif0q/shoe/f/y/n/7-wf-020-7-big-fox-black-original-imagp9uyxbwntyhq.jpeg?q=70"><br>
+        <h3 style="font-family: 'Times New Roman', Times, serif;">Campus Shoe</h3>
+        <h5 style="font-family:'Times New Roman', Times, serif">Price:780</h5>
+        <button type="button" class="btn btn-dark" onclick="addToCart('Campus Shoe', 'N/A', 780, 'https://rukminim2.flixcart.com/image/612/612/xif0q/shoe/f/y/n/7-wf-020-7-big-fox-black-original-imagp9uyxbwntyhq.jpeg?q=70')">Add to Cart</button>
+        <button type="button" class="btn btn-dark" onclick="window.location.href='payment.html'">Buy now</button>
+    </div>
+</div>
+
+                <div class="col-md-3" style="text-align: center;">
+    <div class="product-card bg-dark text-light" style="height: 380px;width:250px">
+        <img src="https://rukminim2.flixcart.com/image/612/612/xif0q/shoe/n/6/i/5-flp-816-prpl-5-fabbmate-purple-original-imahyse725bzmeg3.jpeg?q=70"><br>
+        <h3 style="font-family: 'Times New Roman', Times, serif;">Vokline Shoe</h3>
+        <h5 style="font-family:'Times New Roman', Times, serif">Price:899</h5>
+        <button type="button" class="btn btn-dark" onclick="addToCart('Vokline Shoe', 'N/A', 899, 'https://rukminim2.flixcart.com/image/612/612/xif0q/shoe/n/6/i/5-flp-816-prpl-5-fabbmate-purple-original-imahyse725bzmeg3.jpeg?q=70')">Add to Cart</button>
+        <button type="button" class="btn btn-dark" onclick="window.location.href='payment.html'">Buy now</button>
+    </div>
+</div>
+
+                <div class="col-md-3" style="text-align: center;">
+    <div class="product-card bg-dark text-light" style="height: 380px;width:250px">
+        <img src="https://rukminim2.flixcart.com/image/612/612/xif0q/shoe/0/r/e/-original-imahan49wjn3qw3f.jpeg?q=70"><br>
+        <h3 style="font-family: 'Times New Roman', Times, serif;">Bigfox Shoe</h3>
+        <h5 style="font-family:'Times New Roman', Times, serif">Price:899</h5>
+        <button type="button" class="btn btn-dark" onclick="addToCart('Bigfox Shoe', 'N/A', 899, 'https://rukminim2.flixcart.com/image/612/612/xif0q/shoe/0/r/e/-original-imahan49wjn3qw3f.jpeg?q=70')">Add to Cart</button>
+        <button type="button" class="btn btn-dark" onclick="window.location.href='payment.html'">Buy now</button>
+    </div>
+</div>
+
+                <div class="col-md-3 " style="text-align: center;">
+    <div class="product-card bg-dark text-light" style="height: 380px;width:250px">
+        <img src="https://rukminim2.flixcart.com/image/612/612/xif0q/shoe/k/c/m/8-22l-204-8-campus-gry-blk-original-imah9tfqrqmgrsqt.jpeg?q=70"><br>
+        <h3 style="font-family: 'Times New Roman', Times, serif;">Fabbmate Shoe</h3>
+        <h5 style="font-family:'Times New Roman', Times, serif">Price:1100</h5>
+        <button type="button" class="btn btn-dark" onclick="addToCart('Fabbmate Shoe', 'N/A', 1100, 'https://rukminim2.flixcart.com/image/612/612/xif0q/shoe/k/c/m/8-22l-204-8-campus-gry-blk-original-imah9tfqrqmgrsqt.jpeg?q=70')">Add to Cart</button>
+        <button type="button" class="btn btn-dark" onclick="window.location.href='payment.html'">Buy now</button>
+    </div>
+</div>
+
+                <div class="col-md-3" style="text-align: center;">
+    <div class="product-card bg-dark text-light" style="height: 380px;width:250px">
+        <img src="https://rukminim2.flixcart.com/image/612/612/xif0q/shoe/c/y/z/8-breeze-01-8-asian-navy-original-imah43cacdsfuqys.jpeg?q=70"><br>
+        <h3 style="font-family: 'Times New Roman', Times, serif;">Redtape Shoe</h3>
+        <h5 style="font-family:'Times New Roman', Times, serif">Price:879</h5>
+        <button type="button" class="btn btn-dark" onclick="addToCart('Redtape Shoe', 'N/A', 879, 'https://rukminim2.flixcart.com/image/612/612/xif0q/shoe/c/y/z/8-breeze-01-8-asian-navy-original-imah43cacdsfuqys.jpeg?q=70')">Add to Cart</button>
+        <button type="button" class="btn btn-dark" onclick="window.location.href='payment.html'">Buy now</button>
+    </div>
+</div>
+
+                <div class="col-md-3" style="text-align: center;">
+    <div class="product-card bg-dark text-light" style="height: 380px;width:250px">
+        <img src="https://rukminim2.flixcart.com/image/612/612/xif0q/shoe/h/w/w/5-daizy-black-5-vokline-black-original-imah5tzzfetnxrvd.jpeg?q=70"><br>
+        <h3 style="font-family: 'Times New Roman', Times, serif;">Campus Shoe</h3>
+        <h5 style="font-family:'Times New Roman', Times, serif">Price:679</h5>
+        <button type="button" class="btn btn-dark" onclick="addToCart('Campus Shoe', 'N/A', 679, 'https://rukminim2.flixcart.com/image/612/612/xif0q/shoe/h/w/w/5-daizy-black-5-vokline-black-original-imah5tzzfetnxrvd.jpeg?q=70')">Add to Cart</button>
+        <button type="button" class="btn btn-dark" onclick="window.location.href='payment.html'">Buy now</button>
+    </div>
+</div>
+
+                <div class="col-md-3" style="text-align: center;">
+    <div class="product-card bg-dark text-light" style="height: 380px;width:250px">
+        <img src="https://rukminim2.flixcart.com/image/612/612/xif0q/shoe/h/m/m/6-843-blk-6-fabbmate-black-original-imagtzvetaaqhcyf.jpeg?q=70"><br>
+        <h3 style="font-family: 'Times New Roman', Times, serif;">Asian Shoe</h3>
+        <h5 style="font-family:'Times New Roman', Times, serif">Price:999</h5>
+        <button type="button" class="btn btn-dark" onclick="addToCart('Asian Shoe', 'N/A', 999, 'https://rukminim2.flixcart.com/image/612/612/xif0q/shoe/h/m/m/6-843-blk-6-fabbmate-black-original-imagtzvetaaqhcyf.jpeg?q=70')">Add to Cart</button>
+        <button type="button" class="btn btn-dark" onclick="window.location.href='payment.html'">Buy now</button>
+    </div>
+</div>
+                         
+            </div>
+        </div>
+    </div>
+
+
+    <div id="smartwatch-container" class="product-tab" style="display:none;">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3" style="text-align: center;">
+    <div class="product-card bg-dark text-light" style="height: 400px;width:250px">
+        <img src="https://rukminim2.flixcart.com/image/612/612/xif0q/shopsy-smartwatch/t/8/5/44-android-ios-t500-cartbae-yes-original-imagn5f6ymxzs5fk.jpeg?q=70"><br>
+        <h3 style="font-family: 'Times New Roman', Times, serif;">Bluetooth Smartwatch</h3>
+        <h5 style="font-family: 'Times New Roman', Times, serif;">Price:1100</h5>   
+        <button type="button" class="btn btn-dark" onclick="addToCart('Bluetooth Smartwatch', 'N/A', 1100, 'https://rukminim2.flixcart.com/image/612/612/xif0q/shopsy-smartwatch/t/8/5/44-android-ios-t500-cartbae-yes-original-imagn5f6ymxzs5fk.jpeg?q=70')">Add to Cart</button>
+        <button type="button" class="btn btn-dark" onclick="window.location.href='payment.html'">Buy now</button>                   
+    </div>
+</div>
+
+               <div class="col-md-3" style="text-align: center;">
+    <div class="product-card bg-dark text-light" style="height: 400px;width:250px">
+        <img src="https://rukminim2.flixcart.com/image/612/612/xif0q/smartwatch/d/2/y/49-fl-t800-grey-fg-android-ios-punnkfunnk-yes-original-imaha3x8vntdgdfa.jpeg?q=70"><br>
+        <h3 style="font-family: 'Times New Roman', Times, serif;">UltraSeries Smartwatch</h3>
+        <h5 style="font-family: 'Times New Roman', Times, serif;">Price:1700</h5>   
+        <button type="button" class="btn btn-dark" onclick="addToCart('UltraSeries Smartwatch', '',1700, 'https://rukminim2.flixcart.com/image/612/612/xif0q/smartwatch/d/2/y/49-fl-t800-grey-fg-android-ios-punnkfunnk-yes-original-imaha3x8vntdgdfa.jpeg?q=70')">Add to Cart</button>
+        <button type="button" class="btn btn-dark" onclick="window.location.href='payment.html'">Buy now</button>                   
+    </div>
+</div>
+
+                <div class="col-md-3" style="text-align: center;">
+    <div class="product-card bg-dark text-light" style="height: 400px;width:250px">
+        <img src="https://rukminim2.flixcart.com/image/612/612/xif0q/smartwatch/m/f/b/49-t10-orange-android-ios-paradise-yes-original-imah7fcxtr6hyeqc.jpeg?q=70"><br>
+        <h3 style="font-family: 'Times New Roman', Times, serif;">Paradise Smartwatch</h3>
+        <h5 style="font-family: 'Times New Roman', Times, serif;">Price:1650</h5>   
+        <button type="button" class="btn btn-dark" onclick="addToCart('Paradise Smartwatch', 'N/A', 1650, 'https://rukminim2.flixcart.com/image/612/612/xif0q/smartwatch/m/f/b/49-t10-orange-android-ios-paradise-yes-original-imah7fcxtr6hyeqc.jpeg?q=70')">Add to Cart</button>
+        <button type="button" class="btn btn-dark" onclick="window.location.href='payment.html'">Buy now</button>                   
+    </div>
+</div>
+
+<div class="col-md-3" style="text-align: center;">
+    <div class="product-card bg-dark text-light" style="height: 400px;width:250px">
+        <img src="https://rukminim2.flixcart.com/image/612/612/xif0q/smartwatch/q/q/w/-original-imah93fyrtbyzfff.jpeg?q=70"><br>
+        <h3 style="font-family: 'Times New Roman', Times, serif;">Fastrack Smartwatch</h3>
+        <h5 style="font-family: 'Times New Roman', Times, serif;">Price:2170</h5>   
+        <button type="button" class="btn btn-dark" onclick="addToCart('Fastrack Smartwatch', 'N/A', 2170, 'https://rukminim2.flixcart.com/image/612/612/xif0q/smartwatch/q/q/w/-original-imah93fyrtbyzfff.jpeg?q=70')">Add to Cart</button>
+        <button type="button" class="btn btn-dark" onclick="window.location.href='payment.html'">Buy now</button>                   
+    </div>
+</div>
+
+                <div class="col-md-3" style="text-align: center;">
+    <div class="product-card bg-dark text-light" style="height: 400px;width:250px">
+        <img src="https://rukminim2.flixcart.com/image/612/612/xif0q/smartwatch/u/8/o/49-new-desgn-ultra-s9-android-ios-wtg-yes-original-imahavw2tgnbt6sg.jpeg?q=70"><br>
+        <h3 style="font-family: 'Times New Roman', Times, serif;">HeartBeat Monitor</h3>
+        <h5 style="font-family: 'Times New Roman', Times, serif;">Price: 3000</h5>   
+        <button type="button" class="btn btn-dark" onclick="addToCart('HeartBeat Monitor', 'N/A', 3000, 'https://rukminim2.flixcart.com/image/612/612/xif0q/smartwatch/u/8/o/49-new-desgn-ultra-s9-android-ios-wtg-yes-original-imahavw2tgnbt6sg.jpeg?q=70')">Add to Cart</button>
+        <button type="button" class="btn btn-dark" onclick="window.location.href='payment.html'">Buy now</button>                   
+    </div>
+</div>
+
+<div class="col-md-3" style="text-align: center;">
+    <div class="product-card bg-dark text-light" style="height: 400px;width:250px">
+        <img src="https://rukminim2.flixcart.com/image/612/612/xif0q/smartwatch/9/q/i/46-482-m1-android-ios-cellecor-yes-original-imah8fuzvehvvhdq.jpeg?q=70"><br>
+        <h3 style="font-family: 'Times New Roman', Times, serif;">AI Voice Assistant Smartwatch</h3>
+        <h5 style="font-family: 'Times New Roman', Times, serif;">Price: 3000</h5>   
+        <button type="button" class="btn btn-dark" onclick="addToCart('AI Voice Assistant Smartwatch', 'N/A', 3000, 'https://rukminim2.flixcart.com/image/612/612/xif0q/smartwatch/9/q/i/46-482-m1-android-ios-cellecor-yes-original-imah8fuzvehvvhdq.jpeg?q=70')">Add to Cart</button>
+        <button type="button" class="btn btn-dark" onclick="window.location.href='payment.html'">Buy now</button>                   
+    </div>
+</div>
+
+                <div class="col-md-3" style="text-align: center;">
+    <div class="product-card bg-dark text-light" style="height: 400px;width:250px">
+        <img src="https://rukminim2.flixcart.com/image/612/612/xif0q/shopsy-smartwatch/t/8/5/44-android-ios-t500-cartbae-yes-original-imagn5f6ymxzs5fk.jpeg?q=70"><br>
+        <h3 style="font-family: 'Times New Roman', Times, serif;">Techmaze Smartwatch</h3>
+        <h5 style="font-family: 'Times New Roman', Times, serif;">Price: 2700</h5>   
+        <button type="button" class="btn btn-dark" onclick="addToCart('Techmaze Smartwatch', 'N/A', 2700, 'https://rukminim2.flixcart.com/image/612/612/xif0q/shopsy-smartwatch/t/8/5/44-android-ios-t500-cartbae-yes-original-imagn5f6ymxzs5fk.jpeg?q=70')">Add to Cart</button>
+        <button type="button" class="btn btn-dark" onclick="window.location.href='payment.html'">Buy now</button>                   
+    </div>
+</div>
+
+<div class="col-md-3" style="text-align: center;">
+    <div class="product-card bg-dark text-light" style="height: 400px;width:250px">
+        <img src="https://rukminim2.flixcart.com/image/612/612/xif0q/smartwatch/m/s/v/40-t800-ultra-metal-silver-android-ios-gamesir-yes-original-imaha37hz9bzyuzf.jpeg?q=70"><br>
+        <h3 style="font-family: 'Times New Roman', Times, serif;">GameSir SmartWatch</h3>
+        <h5 style="font-family: 'Times New Roman', Times, serif;">Price: 2690</h5>   
+        <button type="button" class="btn btn-dark" onclick="addToCart('GameSir SmartWatch', 'N/A', 2690, 'https://rukminim2.flixcart.com/image/612/612/xif0q/smartwatch/m/s/v/40-t800-ultra-metal-silver-android-ios-gamesir-yes-original-imaha37hz9bzyuzf.jpeg?q=70')">Add to Cart</button>
+        <button type="button" class="btn btn-dark" onclick="window.location.href='payment.html'">Buy now</button>                   
+    </div>
+</div>
+
+<div class="col-md-3" style="text-align: center;">
+    <div class="product-card bg-dark text-light" style="height: 400px;width:250px">
+        <img src="https://rukminim2.flixcart.com/image/612/612/xif0q/smartwatch/f/h/v/36-322-38153wp01-android-ios-fastrack-yes-original-imah4gmnnrgtgrd8.jpeg?q=70"><br>
+        <h3 style="font-family: 'Times New Roman', Times, serif;">Fastrack Smartwatch</h3>
+        <h5 style="font-family: 'Times New Roman', Times, serif;">Price: 2270</h5>   
+        <button type="button" class="btn btn-dark" onclick="addToCart('Fastrack Smartwatch', '', 2270, 'https://rukminim2.flixcart.com/image/612/612/xif0q/smartwatch/f/h/v/36-322-38153wp01-android-ios-fastrack-yes-original-imah4gmnnrgtgrd8.jpeg?q=70')">Add to Cart</button>
+
+        <button type="button" class="btn btn-dark" onclick="window.location.href='payment.html'">Buy now</button>                   
+    </div>
+</div>
+
+                <div class="col-md-3" style="text-align: center;">
+    <div class="product-card bg-dark text-light" style="height: 400px;width:250px">
+        <img src="https://rukminim2.flixcart.com/image/612/612/xif0q/smartwatch/d/b/u/51-h9-pink-watch-2-android-wyltron-yes-original-imah4uytzh5afttm.jpeg?q=70"><br>
+        <h3 style="font-family: 'Times New Roman', Times, serif;">Wyltron Smartwatch</h3>
+        <h5 style="font-family: 'Times New Roman', Times, serif;">Price: 1780</h5>   
+        <button type="button" class="btn btn-dark" onclick="addToCart('Wyltron Smartwatch', 'N/A', 1780, 'https://rukminim2.flixcart.com/image/612/612/xif0q/smartwatch/d/b/u/51-h9-pink-watch-2-android-wyltron-yes-original-imah4uytzh5afttm.jpeg?q=70')">Add to Cart</button>
+        <button type="button" class="btn btn-dark" onclick="window.location.href='payment.html'">Buy now</button>                   
+    </div>
+</div>
+              
+            </div>
+        </div>
+    </div>
+
+    <div id="protein-container" class="product-tab" style="display:none;">
+        <div class="container">
+            <div class="row">
+                
+                <div class="col-md-3" style="text-align: center;">
+    <div class="product-card bg-dark text-light" style="height: 405px;width:250px">
+        <img src="https://rukminim2.flixcart.com/image/612/612/xif0q/protein-supplement/i/l/3/creatine-micronised-creatine-monohydrate-lab-tested-enhanced-original-imahazxmnctqgcbv.jpeg?q=70"><br>
+        <h3 style="font-family: 'Times New Roman', Times, serif;">Wellcore Creatine Powder</h3>
+        <h5 style="font-family: 'Times New Roman', Times, serif;">Price:1240</h5>
+        <button type="button" class="btn btn-dark" onclick="addToCart('Wellcore Creatine Powder', 'N/A', 1240, 'https://rukminim2.flixcart.com/image/612/612/xif0q/protein-supplement/i/l/3/creatine-micronised-creatine-monohydrate-lab-tested-enhanced-original-imahazxmnctqgcbv.jpeg?q=70')">Add to Cart</button>
+        <button type="button" class="btn btn-dark" onclick="window.location.href='payment.html'">Buy now</button>                   
+    </div>
+</div>
+
+<div class="col-md-3" style="text-align: center;">
+    <div class="product-card bg-dark text-light" style="height: 405px;width:250px">
+        <img src="https://rukminim2.flixcart.com/image/612/612/xif0q/protein-supplement/m/r/5/weight-gainers-mass-gainers-cafe-mocha-550-32038047-endura-original-imahafvknym8bner.jpeg?q=70"><br>
+        <h3 style="font-family: 'Times New Roman', Times, serif;">Endura Cafe Powder</h3>
+        <h5 style="font-family: 'Times New Roman', Times, serif;">Price:1360</h5>
+        <button type="button" class="btn btn-dark" onclick="addToCart('Endura Cafe Powder', 'N/A', 1360, 'https://rukminim2.flixcart.com/image/612/612/xif0q/protein-supplement/m/r/5/weight-gainers-mass-gainers-cafe-mocha-550-32038047-endura-original-imahafvknym8bner.jpeg?q=70')">Add to Cart</button>
+        <button type="button" class="btn btn-dark" onclick="window.location.href='payment.html'">Buy now</button>                   
+    </div>
+</div>
+
+<div class="col-md-3" style="text-align: center;">
+    <div class="product-card bg-dark text-light" style="height: 405px;width:250px">
+        <img src="https://rukminim2.flixcart.com/image/612/612/xif0q/protein-supplement/n/3/r/creatine-as-it-is-atom-creatine-monohydrate-100g-32-servings-original-imahah6nv6jgztyz.jpeg?q=70"><br>
+        <h3 style="font-family: 'Times New Roman', Times, serif;">Arom Creatine Powder</h3>
+        <h5 style="font-family: 'Times New Roman', Times, serif;">Price:1290</h5>
+        <button type="button" class="btn btn-dark" onclick="addToCart('Arom Creatine Powder', 'N/A', 1290, 'https://rukminim2.flixcart.com/image/612/612/xif0q/protein-supplement/n/3/r/creatine-as-it-is-atom-creatine-monohydrate-100g-32-servings-original-imahah6nv6jgztyz.jpeg?q=70')">Add to Cart</button>
+        <button type="button" class="btn btn-dark" onclick="window.location.href='payment.html'">Buy now</button>                   
+    </div>
+</div>
+               
+                <div class="col-md-3 " style="text-align: center;">
+    <div class="product-card bg-dark text-light" style="height: 405px;width:250px">
+        <img src="https://rukminim2.flixcart.com/image/612/612/xif0q/protein-supplement/t/b/h/weight-gainers-mass-gainers-mass-gainer-for-lean-muscle-gain-original-imah7pf8cughnaaz.jpeg?q=70"><br>
+        <h3 style="font-family: 'Times New Roman', Times, serif;">Mass Gainer Creatine Powder</h3>
+        <h5 style="font-family: 'Times New Roman', Times, serif;">Price:1100</h5>
+        <button type="button" class="btn btn-dark" onclick="addToCart('Mass Gainer Creatine Powder', 'N/A', 1100, 'https://rukminim2.flixcart.com/image/612/612/xif0q/protein-supplement/t/b/h/weight-gainers-mass-gainers-mass-gainer-for-lean-muscle-gain-original-imah7pf8cughnaaz.jpeg?q=70')">Add to Cart</button>
+        <button type="button" class="btn btn-dark" onclick="window.location.href='payment.html'">Buy now</button>                   
+    </div>
+</div>
+
+<div class="col-md-3" style="text-align: center;">
+    <div class="product-card bg-dark text-light" style="height: 405px;width:250px">
+        <img src="https://rukminim2.flixcart.com/image/612/612/xif0q/protein-supplement/a/w/a/whey-protein-pure-100-whey-protein-isolate-raw-whey-original-imah9hn6bgkf3abs.jpeg?q=70"><br>
+        <h3 style="font-family: 'Times New Roman', Times, serif;">Mass Gainer Creatine Powder</h3>
+        <h5 style="font-family: 'Times New Roman', Times, serif;">Price:1560</h5>
+        <button type="button" class="btn btn-dark" onclick="addToCart('Mass Gainer Creatine Powder', 'N/A', 1560, 'https://rukminim2.flixcart.com/image/612/612/xif0q/protein-supplement/a/w/a/whey-protein-pure-100-whey-protein-isolate-raw-whey-original-imah9hn6bgkf3abs.jpeg?q=70')">Add to Cart</button>
+        <button type="button" class="btn btn-dark" onclick="window.location.href='payment.html'">Buy now</button>                   
+    </div>
+</div>
+
+                <div class="col-md-3" style="text-align: center;">
+    <div class="product-card bg-dark text-light" style="height: 405px;width:250px">
+        <img src="https://rukminim2.flixcart.com/image/612/612/xif0q/protein-supplement/j/h/v/whey-protein-perform-whey-protein-supplement-powder-original-imah4dfwdqaxpcnp.jpeg?q=70"><br>
+        <h3 style="font-family: 'Times New Roman', Times, serif;">Nakpro Whey Protien</h3>
+        <h5 style="font-family: 'Times New Roman', Times, serif;">Price:1478</h5>
+        <button type="button" class="btn btn-dark" onclick="addToCart('Nakpro Whey Protien', 'N/A', 1478, 'https://rukminim2.flixcart.com/image/612/612/xif0q/protein-supplement/j/h/v/whey-protein-perform-whey-protein-supplement-powder-original-imah4dfwdqaxpcnp.jpeg?q=70')">Add to Cart</button>
+        <button type="button" class="btn btn-dark" onclick="window.location.href='payment.html'">Buy now</button>                   
+    </div>
+</div>
+
+<div class="col-md-3" style="text-align: center;">
+    <div class="product-card bg-dark text-light" style="height: 405px;width:250px">
+        <img src="https://rukminim2.flixcart.com/image/612/612/xif0q/protein-supplement/f/v/u/whey-protein-atom-6600720211-as-it-is-nutrition-original-imah3nmcr2xngtyb.jpeg?q=70"><br>
+        <h3 style="font-family: 'Times New Roman', Times, serif;">Atom Whey Protien</h3>
+        <h5 style="font-family: 'Times New Roman', Times, serif;">Price:1345</h5>
+        <button type="button" class="btn btn-dark" onclick="addToCart('Atom Whey Protien', 'N/A', 1345, 'https://rukminim2.flixcart.com/image/612/612/xif0q/protein-supplement/f/v/u/whey-protein-atom-6600720211-as-it-is-nutrition-original-imah3nmcr2xngtyb.jpeg?q=70')">Add to Cart</button>
+        <button type="button" class="btn btn-dark" onclick="window.location.href='payment.html'">Buy now</button>                   
+    </div>
+</div>
+
+<div class="col-md-3 " style="text-align: center;">
+    <div class="product-card bg-dark text-light" style="height: 405px;width:250px">
+        <img src="https://rukminim2.flixcart.com/image/612/612/jzd0qkw0/protein-supplement/q/z/j/insane-040232585258-insane-labz-original-imafjem9hbdjz6nh.jpeg?q=70"><br>
+        <h3 style="font-family: 'Times New Roman', Times, serif;">MSN Whey Protien</h3>
+        <h5 style="font-family: 'Times New Roman', Times, serif;">Price:1256</h5>
+        <button type="button" class="btn btn-dark" onclick="addToCart('MSN Whey Protien', 'N/A', 1256, 'https://rukminim2.flixcart.com/image/612/612/jzd0qkw0/protein-supplement/q/z/j/insane-040232585258-insane-labz-original-imafjem9hbdjz6nh.jpeg?q=70')">Add to Cart</button>
+        <button type="button" class="btn btn-dark" onclick="window.location.href='payment.html'">Buy now</button>                   
+    </div>
+</div>
+
+                               
+               <div class="col-md-3 " style="text-align: center;">
+    <div class="product-card bg-dark text-light" style="height: 405px;width:250px">
+        <img src="https://rukminim2.flixcart.com/image/612/612/xif0q/protein-supplement/n/i/i/creatine-creatine-monohydrate-powder-for-muscle-endurance-original-imah4dhm7qezmhhz.jpeg?q=70"><br>
+        <h3 style="font-family: 'Times New Roman', Times, serif;">Nakpro Creatine Powder</h3>
+        <h5 style="font-family: 'Times New Roman', Times, serif;">Price:1159</h5>
+        <button type="button" class="btn btn-dark" onclick="addToCart('Nakpro Creatine Powder', 'N/A', 1159, 'https://rukminim2.flixcart.com/image/612/612/xif0q/protein-supplement/n/i/i/creatine-creatine-monohydrate-powder-for-muscle-endurance-original-imah4dhm7qezmhhz.jpeg?q=70')">Add to Cart</button>
+        <button type="button" class="btn btn-dark" onclick="window.location.href='payment.html'">Buy now</button>                   
+    </div>
+</div>
+            
+            </div>
+        </div>
+    </div>
+    
+
+
+    
+
+        <div id="gymbag-container" class="product-tab" style="display:none">
+            <div class="container">
+                <div class="row">
+                <div class="col-md-3" style="text-align: center;">
+        <div class="product-card bg-dark text-light" style="height: 380px;width:250px">
+            <img src="https://rukminim2.flixcart.com/image/612/612/xif0q/sport-bag/r/c/h/prime-gym-bag-with-side-pocket-standard-mgb4011-kit-bag-mayor-17-original-imah8u9eaf5wzhnf.jpeg?q=70"><br>
+            <h3 style="font-family: 'Times New Roman', Times, serif;">Mayor GymBag</h3>
+            <h5 style="font-family: 'Times New Roman', Times, serif;">Price:198</h5>
+            <button type="button" class="btn btn-dark"
+                onclick="addToCart('Mayor GymBag', '', 198, 'https://rukminim2.flixcart.com/image/612/612/xif0q/sport-bag/r/c/h/prime-gym-bag-with-side-pocket-standard-mgb4011-kit-bag-mayor-17-original-imah8u9eaf5wzhnf.jpeg?q=70')">
+                Add to Cart</button>
+            <button type="button" class="btn btn-dark" onclick="window.location.href='payment.html'">Buy now</button>
+        </div>
+    </div>
+
+    <div class="col-md-3" style="text-align: center;">
+        <div class="product-card bg-dark text-light" style="height: 380px;width:250px">
+            <img src="https://rukminim2.flixcart.com/image/612/612/xif0q/sport-bag/d/g/i/stylish-polyester-bag-shoulder-duffle-gym-bags-for-men-fitness-original-imah6r6wbktnqhkt.jpeg?q=70"><br>
+            <h3 style="font-family: 'Times New Roman', Times, serif;">Goodvibes Bag</h3>
+            <h5 style="font-family: 'Times New Roman', Times, serif;">Price:174</h5>
+            <button type="button" class="btn btn-dark"
+                onclick="addToCart('Goodvibes Bag', '', 174, 'https://rukminim2.flixcart.com/image/612/612/xif0q/sport-bag/d/g/i/stylish-polyester-bag-shoulder-duffle-gym-bags-for-men-fitness-original-imah6r6wbktnqhkt.jpeg?q=70')">
+                Add to Cart</button>
+            <button type="button" class="btn btn-dark" onclick="window.location.href='payment.html'">Buy now</button>
+        </div>
+    </div>
+    <div class="col-md-3" style="text-align: center;">
+        <div class="product-card bg-dark text-light" style="height: 380px;width:250px">
+            <img src="https://rukminim2.flixcart.com/image/612/612/xif0q/sport-bag/v/2/y/premium-basic-s-na-kit-bag-victory-10-gym-original-imagnngcvnwuwewg.jpeg?q=70"><br>
+            <h3 style="font-family: 'Times New Roman', Times, serif;">Victory GymBag</h3>
+            <h5 style="font-family: 'Times New Roman', Times, serif;">Price:389</h5>
+            <button type="button" class="btn btn-dark"
+                onclick="addToCart('Victory GymBag', '', 389, 'https://rukminim2.flixcart.com/image/612/612/xif0q/sport-bag/v/2/y/premium-basic-s-na-kit-bag-victory-10-gym-original-imagnngcvnwuwewg.jpeg?q=70')">
+                Add to Cart</button>
+            <button type="button" class="btn btn-dark" onclick="window.location.href='payment.html'">Buy now</button>
+        </div>
+    </div>
+
+    <div class="col-md-3 " style="text-align: center;">
+        <div class="product-card bg-dark text-light" style="height: 380px;width:250px">
+            <img src="https://rukminim2.flixcart.com/image/612/612/xif0q/sport-bag/v/n/q/trendy-gym-bag-duffle-bag-shoulder-bag-sports-bag-gym-bags-for-original-imah94q9s7szmdqf.jpeg?q=70"><br>
+            <h3 style="font-family: 'Times New Roman', Times, serif;">Boldfit GymBag</h3>
+            <h5 style="font-family: 'Times New Roman', Times, serif;">Price:239</h5>
+            <button type="button" class="btn btn-dark"
+                onclick="addToCart('Boldfit GymBag', '', 239, 'https://rukminim2.flixcart.com/image/612/612/xif0q/sport-bag/v/n/q/trendy-gym-bag-duffle-bag-shoulder-bag-sports-bag-gym-bags-for-original-imah94q9s7szmdqf.jpeg?q=70')">
+                Add to Cart</button>
+            <button type="button" class="btn btn-dark" onclick="window.location.href='payment.html'">Buy now</button>
+        </div>
+    </div>
+
+                    <div class="col-md-3" style="text-align: center;">
+        <div class="product-card bg-dark text-light" style="height: 380px;width:250px">
+            <img src="https://rukminim2.flixcart.com/image/612/612/xif0q/sport-bag/v/n/q/trendy-gym-bag-duffle-bag-shoulder-bag-sports-bag-gym-bags-for-original-imah94q9s7szmdqf.jpeg?q=70"><br>
+            <h3 style="font-family: 'Times New Roman', Times, serif;">Emmcraz Bag</h3>
+            <h5 style="font-family: 'Times New Roman', Times, serif;">Price:138</h5>
+            <button type="button" class="btn btn-dark"
+                onclick="addToCart('Emmcraz Bag', '', 138, 'https://rukminim2.flixcart.com/image/612/612/xif0q/sport-bag/v/n/q/trendy-gym-bag-duffle-bag-shoulder-bag-sports-bag-gym-bags-for-original-imah94q9s7szmdqf.jpeg?q=70')">
+                Add to Cart</button>
+            <button type="button" class="btn btn-dark" onclick="window.location.href='payment.html'">Buy now</button>
+        </div>
+    </div>
+
+    <div class="col-md-3" style="text-align: center;">
+        <div class="product-card bg-dark text-light" style="height: 380px;width:250px">
+            <img src="https://rukminim2.flixcart.com/image/612/612/xif0q/sport-bag/9/s/2/duffle-gym-bag-shoulder-bag-for-men-women-m-1-kit-bag-risen-original-imahyfamhxdcf3hj.jpeg?q=70"><br>
+            <h3 style="font-family: 'Times New Roman', Times, serif;">Arrow GymBag</h3>
+            <h5 style="font-family: 'Times New Roman', Times, serif;">Price:189</h5>
+            <button type="button" class="btn btn-dark"
+                onclick="addToCart('Arrow GymBag', '', 189, 'https://rukminim2.flixcart.com/image/612/612/xif0q/sport-bag/9/s/2/duffle-gym-bag-shoulder-bag-for-men-women-m-1-kit-bag-risen-original-imahyfamhxdcf3hj.jpeg?q=70')">
+                Add to Cart</button>
+            <button type="button" class="btn btn-dark" onclick="window.location.href='payment.html'">Buy now</button>
+        </div>
+    </div>
+                
+                </div>
+            </div>
+        </div>
+
+        <div id="yogamat-container" class="product-tab" style="display:none;">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-3" style="text-align: center;">
+        <div class="product-card bg-dark text-light" style="height: 380px;width:250px">
+            <img src="https://rukminim2.flixcart.com/image/612/612/xif0q/sport-mat/w/5/w/10mm-premium-quality-yoga-mat-10-60-quick-shel-182-original-imah694ntzb69wgy.jpeg?q=70"><br>
+            <h3 style="font-family: 'Times New Roman', Times, serif;">QuickShel Mat</h3>
+            <h5 style="font-family: 'Times New Roman', Times, serif;">Price:353</h5>
+            <button type="button" class="btn btn-dark"
+                onclick="addToCart('QuickShel Mat', '', 353, 'https://rukminim2.flixcart.com/image/612/612/xif0q/sport-mat/w/5/w/10mm-premium-quality-yoga-mat-10-60-quick-shel-182-original-imah694ntzb69wgy.jpeg?q=70')">
+                Add to Cart</button>
+            <button type="button" class="btn btn-dark" onclick="window.location.href='payment.html'">Buy now</button>
+        </div>
+    </div>
+
+    <div class="col-md-3" style="text-align: center;">
+        <div class="product-card bg-dark text-light" style="height: 380px;width:250px">
+            <img src="https://rukminim2.flixcart.com/image/612/612/xif0q/shopsy-sport-mat/b/y/d/eva-anti-slip-home-exercise-gym-workout-for-men-women-kids-with-original-imah9eb9vmtcvqh3.jpeg?q=70"><br>
+            <h3 style="font-family: 'Times New Roman', Times, serif;">FitnessStar Mat</h3>
+            <h5 style="font-family: 'Times New Roman', Times, serif;">Price:339</h5>
+            <button type="button" class="btn btn-dark"
+                onclick="addToCart('FitnessStar Mat', '', 339, 'https://rukminim2.flixcart.com/image/612/612/xif0q/shopsy-sport-mat/b/y/d/eva-anti-slip-home-exercise-gym-workout-for-men-women-kids-with-original-imah9eb9vmtcvqh3.jpeg?q=70')">
+                Add to Cart</button>
+            <button type="button" class="btn btn-dark" onclick="window.location.href='payment.html'">Buy now</button>
+        </div>
+    </div>
+                
+                    <div class="col-md-3" style="text-align: center;">
+    <div class="product-card bg-dark text-light";">
+        <img src="https://rukminim2.flixcart.com/image/612/612/xif0q/sport-mat/d/7/a/lightweight-anti-slip-soft-eva-4-mm-yoga-mat-for-men-women-original-imah4zjvz23adbhr.jpeg?q=70"><br>
+        <h3 style="font-family: 'Times New Roman', Times, serif;">Adrenex YogaMat</h3>
+        <h5 style="font-family: 'Times New Roman', Times, serif;">Price:284</h5>
+        <button type="button" class="btn btn-dark"
+        onclick="addToCart('Adrenex YogaMat', '', 284, 'https://rukminim2.flixcart.com/image/612/612/xif0q/sport-mat/d/7/a/lightweight-anti-slip-soft-eva-4-mm-yoga-mat-for-men-women-original-imah4zjvz23adbhr.jpeg?q=70')">
+        Add to Cart</button>
+        <button type="button" class="btn btn-dark" onclick="window.location.href='payment.html'">Buy now</button>
+    </div>
+    </div>
+
+                    <div class="col-md-3" style="text-align: center;">
+    <div class="product-card bg-dark text-light">
+        <img src="https://rukminim2.flixcart.com/image/612/612/xif0q/sport-mat/n/z/9/lightweight-anti-slip-soft-eva-mat-with-carry-bag-for-women-men-original-imah4n7hhwfd2dc4.jpeg?q=70"><br>
+        <h3 style="font-family: 'Times New Roman', Times, serif;">Justifit YogaMat</h3>
+        <h5 style="font-family: 'Times New Roman', Times, serif;">Price:323</h5>
+        <button type="button" class="btn btn-dark"
+        onclick="addToCart('Justifit YogaMat', '', 323, 'https://rukminim2.flixcart.com/image/612/612/xif0q/sport-mat/n/z/9/lightweight-anti-slip-soft-eva-mat-with-carry-bag-for-women-men-original-imah4n7hhwfd2dc4.jpeg?q=70')">
+        Add to Cart</button>
+        <button type="button" class="btn btn-dark" onclick="window.location.href='payment.html'">Buy now</button>
+    </div>
+    </div>
+
+    <div class="col-md-3" style="text-align: center;">
+    <div class="product-card bg-dark text-light">
+        <img src="https://rukminim2.flixcart.com/image/612/612/xif0q/sport-mat/n/z/9/lightweight-anti-slip-soft-eva-mat-with-carry-bag-for-women-men-original-imah4n7hhwfd2dc4.jpeg?q=70"><br>
+        <h3 style="font-family: 'Times New Roman', Times, serif;">Antislip Mat</h3>
+        <h5 style="font-family: 'Times New Roman', Times, serif;">Price:330</h5>
+        <button type="button" class="btn btn-dark"
+        onclick="addToCart('Antislip Mat', '', 330, 'https://rukminim2.flixcart.com/image/612/612/xif0q/sport-mat/n/z/9/lightweight-anti-slip-soft-eva-mat-with-carry-bag-for-women-men-original-imah4n7hhwfd2dc4.jpeg?q=70')">
+        Add to Cart</button>
+        <button type="button" class="btn btn-dark" onclick="window.location.href='payment.html'">Buy now</button>
+    </div>
+    </div>
+
+                    <div class="col-md-3" style="text-align: center;">
+        <div class="product-card bg-dark text-light" style="height: 380px;width:250px">
+            <img src="https://rukminim2.flixcart.com/image/612/612/xif0q/sport-mat/h/3/z/6mm-premium-eva-with-tpe-blend-anti-slip-tearless-yoga-mat-all-original-imahy4ch6nuqntnt.jpeg?q=70" alt="Justifit Mat"><br>
+            <h3 style="font-family: 'Times New Roman', Times, serif;">Justifit Mat</h3>
+            <h5 style="font-family: 'Times New Roman', Times, serif;">Price:335</h5>
+            <button type="button" class="btn btn-dark"
+                onclick="addToCart('Justifit Mat', 335, 'https://rukminim2.flixcart.com/image/612/612/xif0q/sport-mat/h/3/z/6mm-premium-eva-with-tpe-blend-anti-slip-tearless-yoga-mat-all-original-imahy4ch6nuqntnt.jpeg?q=70')">
+                Add to Cart
+            </button>
+            <button type="button" class="btn btn-dark" onclick="window.location.href='payment.html'">Buy now</button>
+        </div>
+    </div>
+                
+                <div class="col-md-3 " style="text-align: center;">
+        <div class="product-card bg-dark text-light" style="height: 380px;width:250px">
+            <img src="https://rukminim2.flixcart.com/image/612/612/xif0q/shopsy-sport-mat/v/r/y/6mm-eva-eco-friendly-anti-slip-home-gym-exercise-workout-for-men-original-imah35zyz5yzxfcq.jpeg?q=70"><br>
+            <h3 style="font-family: 'Times New Roman', Times, serif;">QuickShel Mat</h3>
+            <h5 style="font-family: 'Times New Roman', Times, serif;">Price:340</h5>
+            <button type="button" class="btn btn-dark"
+                onclick="addToCart('QuickShel Mat', 340, 'https://rukminim2.flixcart.com/image/612/612/xif0q/shopsy-sport-mat/v/r/y/6mm-eva-eco-friendly-anti-slip-home-gym-exercise-workout-for-men-original-imah35zyz5yzxfcq.jpeg?q=70')">
+                Add to Cart
+            </button>
+            <button type="button" class="btn btn-dark" onclick="window.location.href='payment.html'">Buy now</button>                   
+        </div>
+    </div>
+
+                    <div class="col-md-3" style="text-align: center;">
+        <div class="product-card bg-dark text-light" style="height: 380px;width:250px">
+            <img src="https://rukminim2.flixcart.com/image/612/612/xif0q/sport-mat/l/l/m/8mm-100-eva-eco-friendly-mat-orange-8-mm-yoga-exercise-gym-mat-original-imagwubgqzdtexbw.jpeg?q=70"><br>
+            <h3 style="font-family: 'Times New Roman', Times, serif;">QuickShel Mat</h3>
+            <h5 style="font-family: 'Times New Roman', Times, serif;">Price:359</h5>
+            <button type="button" class="btn btn-dark"
+                onclick="addToCart('QuickShel Mat', 359, 'https://rukminim2.flixcart.com/image/612/612/xif0q/sport-mat/l/l/m/8mm-100-eva-eco-friendly-mat-orange-8-mm-yoga-exercise-gym-mat-original-imagwubgqzdtexbw.jpeg?q=70')">
+                Add to Cart
+            </button>
+            <button type="button" class="btn btn-dark" onclick="window.location.href='payment.html'">Buy now</button>                   
+        </div>
+    </div>
+                
+                </div>
+            </div>
+        </div><br><br><br>
+        
+<script>
+// Initialize cart only once on first visit
+function initializeCart() {
+    if (!localStorage.getItem("cartInitialized")) {
+        localStorage.setItem("cart", JSON.stringify([]));
+        localStorage.setItem("cartInitialized", "true");
+    }
+}
+
+// Update cart count badge
+function updateCartCount() {
+    var cart = JSON.parse(localStorage.getItem("cart")) || [];
+    var countElement = document.getElementById("cart-count");
+    if (countElement) {
+        countElement.innerText = cart.length;
+    }
+}
+
+// Add product to cart
+function addToCart(name, weight, price, imageUrl, category) {
+    if (!category) {
+        var visibleTab = Array.from(document.querySelectorAll('.product-tab'))
+            .find(tab => tab.style.display !== 'none');
+        category = visibleTab ? visibleTab.id.replace('-container', '') : 'unknown';
+    }
+
+    var cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+    var exists = cart.some(function(item) {
+        return item.name === name && item.weight === weight && item.imageUrl === imageUrl;
+    });
+
+    if (exists) {
+        alert("Item already in cart!");
+        return;
+    }
+
+    cart.push({ name: name, weight: weight, price: price, imageUrl: imageUrl, category: category });
+    localStorage.setItem("cart", JSON.stringify(cart));
+    updateCartCount();
+    alert("Item added to cart!");
+}
+
+// Remove product from cart
+function removeFromCart(name, weight, imageUrl) {
+    var cart = JSON.parse(localStorage.getItem("cart")) || [];
+    var updatedCart = cart.filter(function(item) {
+        return !(item.name === name && item.weight === weight && item.imageUrl === imageUrl);
+    });
+    localStorage.setItem("cart", JSON.stringify(updatedCart));
+    updateCartCount();
+    alert("Item removed from cart!");
+}
+
+// On page load
+document.addEventListener("DOMContentLoaded", function () {
+    initializeCart();
+    updateCartCount();
+    loadProductsByCategory();
+    setupSearch();
+    checkActiveNav();
+});
+
+// Set active navigation in localStorage
+function setActiveNav(page) {
+    localStorage.setItem('activeNav', page);
+}
+
+// Check and apply active navigation on page load
+function checkActiveNav() {
+    var activePage = localStorage.getItem('activeNav');
+    if (activePage) {
+        var navLinks = document.querySelectorAll('.topbar .nav-right a');
+        navLinks.forEach(function(link) {
+            var href = link.getAttribute('href');
+            if ((activePage === 'home' && href === 'index.html') ||
+                (activePage === 'catalogue' && href === 'catalogue.html') ||
+                (activePage === 'cart' && href === 'cart.html')) {
+                link.classList.add('active');
+            } else {
+                link.classList.remove('active');
+            }
+        });
+    }
+}
+// Show only selected product category
+function showCategory(category) {
+    var allContainers = document.querySelectorAll('.product-tab');
+    allContainers.forEach(function(container) {
+        container.style.display = 'none';
+    });
+
+    var selected = document.getElementById(category + '-container');
+    if (selected) selected.style.display = 'block';
+
+    var buttons = document.querySelectorAll('.category-btn');
+    buttons.forEach(function(btn) {
+        btn.classList.remove('active');
+    });
+
+    var clickedBtn = Array.prototype.find.call(buttons, function(btn) {
+        return btn.getAttribute('onclick').includes("'" + category + "'");
+    });
+    if (clickedBtn) clickedBtn.classList.add('active');
+}
+
+// Show Buy Now modal
+function showBuyNowModal(name, price, imgUrl) {
+    document.getElementById('buyProductName').innerText = 'Product: ' + name;
+    document.getElementById('buyProductPrice').innerText = 'Price: ₹' + price;
+    document.getElementById('buyProductImage').src = imgUrl;
+    var myModal = new bootstrap.Modal(document.getElementById('buyNowModal'));
+    myModal.show();
+}
+
+// Search functionality
+function setupSearch() {
+    var searchInput = document.getElementById("searchInput");
+    if (!searchInput) return;
+
+    searchInput.addEventListener("input", function () {
+        var filter = this.value.toLowerCase();
+        var cards = document.querySelectorAll(".product-card");
+
+        cards.forEach(function(card) {
+            var wrapper = card.closest(".col-md-3, .col-md-6"); // whole product column
+            if (!wrapper) return;
+
+            var titleElement = card.querySelector("h3, .product-name");
+            var title = titleElement ? titleElement.textContent.toLowerCase() : "";
+            wrapper.style.display = title.includes(filter) ? "" : "none";
+        });
+    });
+}
+
+// Load products into the correct section based on category
+function loadProductsByCategory() {
+    // Your product loading logic goes here
+}
+
+// Logo popup function
+function popupLogo() {
+    var logo = document.getElementById('logoElement');
+    var overlay = document.getElementById('logoOverlay');
+    
+    // Add popup class and show overlay
+    logo.classList.add('logo-popup');
+    overlay.classList.add('active');
+    
+    // Automatically remove after 10 seconds
+    setTimeout(function() {
+        logo.classList.remove('logo-popup');
+        overlay.classList.remove('active');
+    }, 10000);
+}
+
+// Open Account Modal
+function openAccountModal() {
+    document.getElementById('accountModal').style.display = 'block';
+}
+
+// Close Account Modal
+function closeAccountModal() {
+    document.getElementById('accountModal').style.display = 'none';
+}
+
+// Close modal when clicking outside of it
+window.onclick = function(event) {
+    var modal = document.getElementById('accountModal');
+    if (event.target == modal) {
+        modal.style.display = 'none';
+    }
+}
+
+</script>
+
+    <footer>
+        <p>&copy; 2025 FitZone. All rights reserved.</p>
+    </footer>
+
+    
+
+</body>
+</html>

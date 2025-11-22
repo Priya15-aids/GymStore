@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>FitZone - Order</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    :root {
+      --topbar-height: 80px;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      background-color: #fff;
+      color: #000;
+      font-family: Arial, sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* Top Navigation Bar */
+    .topbar {
+      position: fixed;
+      top: 20px;
+      left: 0;
+      right: 0;
+      height: var(--topbar-height);
+      background: #000;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 0 20px;
+    }
+
+    .top-logo-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+
+    .top-logo {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      border: 3px solid #fff;
+      background: #fff;
+      padding: 10px;
+      cursor: pointer;
+    }
+
+    .logo-name {
+      font-family: 'Times New Roman', serif;
+      font-size: 1.5rem;
+      margin-top: 5px;
+      color: #fff;
+    }
+
+    .nav-right {
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .cart-btn {
+      padding: 10px 20px;
+      background: #fff;
+      color: #000;
+      border: 2px solid #000;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      position: relative;
+    }
+
+    .cart-count {
+      position: absolute;
+      top: 0;
+      right: 0;
+      transform: translate(25%, -25%);
+      background: #fff;
+      color: #000;
+      border: 1px solid #000;
+      width: 20px;
+      height: 20px;
+      border-radius: 3px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: bold;
+    }
+
+    /* Main Content */
+    .main-content {
+      margin-top: calc(var(--topbar-height) + 40px);
+      padding: 20px;
+      min-height: calc(100vh - var(--topbar-height) - 40px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .order-container {
+      max-width: 600px;
+      width: 100%;
+      padding: 40px;
+      background-color: #fff;
+      border-radius: 15px;
+      border: 2px solid #000;
+      text-align: center;
+    }
+
+    h2, h4 {
+      color: #000;
+      margin-bottom: 30px;
+    }
+
+    label {
+      float: left;
+      margin-top: 15px;
+      color: #000;
+      font-weight: bold;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 5px;
+      border: 2px solid #000;
+      background-color: #fff;
+      color: #000;
+    }
+
+    .btn-custom {
+      margin-top: 30px;
+      background-color: #000;
+      border: 2px solid #000;
+      color: #fff;
+      padding: 10px 30px;
+      font-weight: bold;
+    }
+
+    .btn-custom:hover {
+      background-color: #fff;
+      color: #000;
+    }
+
+    #deliveryMsg {
+      margin-top: 20px;
+      color: #00ff00;
+      font-weight: bold;
+      display: none;
+    }
+
+    footer {
+      background-color: #000;
+      padding: 20px;
+      text-align: center;
+      color: #fff;
+    }
+
+    /* Logo Popup */
+    #logoPopup {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 10000;
+      display: none;
+    }
+
+    #logoPopup img {
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      border: 5px solid #fff;
+      background: #fff;
+      padding: 20px;
+      box-shadow: 0 0 50px rgba(255,255,255,0.5);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .topbar {
+        flex-direction: column;
+        height: auto;
+        padding: 10px;
+      }
+
+      .nav-right {
+        position: static;
+        transform: none;
+        margin-top: 10px;
+      }
+
+      .top-logo {
+        width: 80px;
+        height: 80px;
+      }
+
+      .logo-name {
+        font-size: 1.2rem;
+      }
+
+      .order-container {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Logo Popup -->
+  <div id="logoPopup">
+    <img src="Fitzone.png" alt="FitZone Logo">
+  </div>
+
+  <!-- Top Navigation Bar -->
+  <div class="topbar">
+    <div class="top-logo-container">
+      <img src="Fitzone.png" alt="FitZone Logo" class="top-logo" onclick="showLogoPopup()">
+      <div class="logo-name">FitZone</div>
+    </div>
+    <div class="nav-right">
+      <button class="cart-btn" onclick="window.location.href='cart.html'">
+        Cart
+        <span class="cart-count" id="cartCount">0</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <div class="order-container">
+      <h2>Order Confirmed ✅</h2>
+      <h4>Shipping Address</h4>
+
+      <form onsubmit="return saveAddress(event)">
+        <label for="name">Name</label>
+        <input type="text" id="name" value="XXX" required />
+
+        <label for="address">Address</label>
+        <textarea id="address" rows="4" required>YYY,
+ZZZ,
++91 **********</textarea>
+
+        <button type="submit" class="btn btn-custom">Save Address</button>
+
+        <div id="deliveryMsg">Will be delivered within 24 hours!</div>
+      </form>
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 FitZone. All rights reserved.</p>
+  </footer>
+
+  <script>
+    // Logo Popup
+    function showLogoPopup() {
+      const popup = document.getElementById('logoPopup');
+      popup.style.display = 'block';
+      setTimeout(() => {
+        popup.style.display = 'none';
+      }, 10000);
+    }
+
+    // Update cart count
+    function updateCartCount() {
+      const cart = JSON.parse(localStorage.getItem('cart')) || [];
+      const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+      document.getElementById('cartCount').textContent = totalItems;
+    }
+
+    // Save address
+    function saveAddress(event) {
+      event.preventDefault();
+      document.getElementById("deliveryMsg").style.display = "block";
+      return false;
+    }
+
+    // Initialize on page load
+    window.onload = function() {
+      updateCartCount();
+    };
+  </script>
+</body>
+</html>

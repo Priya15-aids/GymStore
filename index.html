@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FitZone - Home</title>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet"/>
+  <style>
+    :root { 
+      --topbar-height: 60px; 
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #fff;
+      color: #000;
+      padding-top: calc(30px + var(--topbar-height));
+    }
+
+    /* Top black navbar */
+    .topbar {
+      position: fixed;
+      top: 30px;
+      left: 0;
+      right: 0;
+      height: var(--topbar-height);
+      background: black;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 20px;
+      z-index: 1150;
+      border-bottom: 2px solid #000;
+    }
+
+    /* Centered round logo */
+    .top-logo {
+      position: absolute;
+      top: -25px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1100;
+      border: 3px solid #000;
+      box-sizing: border-box;
+      padding: 0;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.5s ease;
+    }
+    
+    .top-logo img { 
+      width: 100%; 
+      height: 100%; 
+      object-fit: cover; 
+      border-radius: 50%; 
+    }
+
+    /* Logo popup animation */
+    .logo-popup {
+      position: fixed !important;
+      top: 50% !important;
+      left: 50% !important;
+      transform: translate(-50%, -50%) scale(3) !important;
+      width: 150px !important;
+      height: 150px !important;
+      z-index: 10000 !important;
+    }
+
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.7);
+      z-index: 9999;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+    
+    .overlay.active { 
+      opacity: 1;
+      visibility: visible;
+    }
+
+    /* Right side nav buttons */
+    .topbar .nav-right {
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      gap: 15px;
+      align-items: center;
+    }
+    
+    .topbar .nav-right a { 
+      color: #fff; 
+      text-decoration: none; 
+      font-weight: 600; 
+      padding: 8px 16px;
+      border-radius: 4px;
+      transition: all 0.3s;
+      position: relative;
+    }
+    
+    .topbar .nav-right a:hover { 
+      background: #333; 
+    }
+    
+    /* Cart badge */
+    .topbar .nav-right a[href="cart.html"] #cart-count {
+      position: absolute;
+      top: 0;
+      right: 0;
+      transform: translate(25%, -25%);
+      background: #fff;
+      color: #000;
+      border-radius: 3px;
+      padding: 2px 6px;
+      font-size: 0.7rem;
+      font-weight: bold;
+      min-width: 18px;
+      text-align: center;
+      border: 1px solid #000;
+    }
+
+    /* Hero image */
+    .hero-image {
+      width: 100%;
+      height: 700px;
+      object-fit: cover;
+      margin-bottom: 40px;
+    }
+
+    /* About and Contact sections */
+    .about-section, .contact-section {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      padding: 40px;
+      margin: 40px auto;
+      max-width: 1200px;
+    }
+
+    .about-content, .contact-content {
+      width: 50%;
+      padding: 20px;
+    }
+
+    .about-image, .contact-image {
+      width: 50%;
+      padding: 20px;
+    }
+
+    .about-image img, .contact-image img {
+      width: 100%;
+      height: auto;
+      border-radius: 10px;
+    }
+
+    .section-title {
+      font-size: 2.5rem;
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
+
+    /* Footer */
+    footer {
+      background-color: #000;
+      padding: 30px 20px;
+      text-align: center;
+      color: #fff;
+      border-top: 2px solid #000;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      body {
+        padding-top: 120px;
+      }
+
+      .topbar {
+        flex-direction: column;
+        height: auto;
+        padding: 10px;
+      }
+
+      .top-logo {
+        position: relative;
+        top: 0;
+        left: 0;
+        transform: none;
+        margin-bottom: 10px;
+        width: 80px;
+        height: 80px;
+      }
+
+      .topbar .nav-right {
+        position: static;
+        transform: none;
+        margin-top: 10px;
+      }
+
+      .hero-image {
+        height: 400px;
+      }
+
+      .about-content, .contact-content,
+      .about-image, .contact-image {
+        width: 100%;
+      }
+
+      .section-title {
+        font-size: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="overlay" id="overlay"></div>
+
+  <!-- Top Navigation Bar -->
+  <div class="topbar">
+    <div class="top-logo" id="topLogo" onclick="showLogoPopup()">
+      <img src="Fitzone.png" alt="FitZone Logo">
+    </div>
+    <div class="nav-right">
+      <a href="index.html">Home</a>
+      <a href="catalogue.html">Catalogue</a>
+      <a href="cart.html">
+        Cart
+        <span id="cart-count">0</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Hero Image -->
+  <img src="Hero.png" alt="FitZone Hero" class="hero-image">
+
+  <!-- About Section -->
+  <div class="about-section">
+    <div class="about-image">
+      <img src="Screenshot 2025-04-12 201507.png" alt="About FitZone">
+    </div>
+    <div class="about-content">
+      <h3 class="section-title">About FitZone</h3>
+      <p>
+        FitZone is a one-stop shop for all your fitness needs. From gym equipment to supplements, 
+        we provide top-quality products to help you achieve your fitness goals 💪🏼. Our mission 
+        is to inspire and support you in your fitness journey. Whether you're a beginner or a pro, 
+        FitZone has everything you need 🏋️‍♂️. Join the FitZone community today and take the first 
+        step toward a healthier, stronger you! 🌟
+      </p>
+    </div>
+  </div>
+
+  <!-- Contact Section -->
+  <div class="contact-section">
+    <div class="contact-content">
+      <h2 class="section-title">Contact Us</h2>
+      <p>If you have any questions or need assistance, don't hesitate to reach out to us! 😊</p>
+      <p><strong>Email:</strong> contact@fitzone.com</p>
+      <p><strong>Phone:</strong> +123 456 7890</p>
+    </div>
+    <div class="contact-image">
+      <img src="Screenshot 2025-04-12 202222.png" alt="Contact FitZone">
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2025 FitZone. All rights reserved.</p>
+  </footer>
+
+  <script>
+    // Logo Popup Animation
+    function showLogoPopup() {
+      const logo = document.getElementById('topLogo');
+      const overlay = document.getElementById('overlay');
+      
+      logo.classList.add('logo-popup');
+      overlay.classList.add('active');
+      
+      setTimeout(() => {
+        logo.classList.remove('logo-popup');
+        overlay.classList.remove('active');
+      }, 10000);
+    }
+
+    // Update cart count
+    function updateCartCount() {
+      const cart = JSON.parse(localStorage.getItem('cart')) || [];
+      const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+      document.getElementById('cart-count').textContent = totalItems;
+    }
+
+    window.onload = function() {
+      updateCartCount();
+    };
+  </script>
+</body>
+</html>
+
+    <!-- Hero Section -->
+    <div class="container-fluid p-0">
+      <div class="hero-container" id="home-section">
+        <img src="Hero.png" alt="Hero Image" class="hero-image" />
+        <div class="hero-text">
+          <h1 class="display-4">Welcome to FitZone</h1><br />
+          <p class="lead">Explore our collection of fitness products and start your fitness journey today!</p><br />
+        </div>
+      </div>
+    </div>
+
+    <!-- About Section -->
+    <div id="about-section" class="about-section mt-5">
+      <div class="about-image d-flex justify-content-center align-items-center">
+        <img src="Screenshot 2025-04-12 201507.png" alt="About Image" class="img-fluid" />
+      </div>
+    <!-- Hero Section -->
+    <div class="hero-container">
+      <img src="Hero.png" alt="Hero Image" class="hero-image" />
+      <div class="hero-text">
+        <h1 class="display-4">Welcome to FitZone</h1><br />
+        <p class="lead">Explore our collection of fitness products and start your fitness journey today!</p><br />
+      </div>
+    </div>
+
+    <!-- About Section -->
+    <div id="about-section" class="about-section">
+      <div class="about-image d-flex justify-content-center align-items-center">
+        <img src="Screenshot 2025-04-12 201507.png" alt="About Image" class="img-fluid" style="width: 100%; height: 100%; object-fit: cover;" />
+      </div>
+      <div class="about-content">
+        <h3 class="section-title">About FitZone</h3>
+        <p>
+          FitZone is a one-stop shop for all your fitness needs. From gym equipment to supplements, we provide top-quality products to help you achieve your fitness goals💪🏼. Our mission is to inspire and support you in your fitness journey. Whether you're a beginner or a pro, FitZone has everything you need🏋️‍♂️. Join the FitZone community today and take the first step toward a healthier, stronger you!🌟
+        </p>
+      </div>
+    </div>
+
+    <!-- Contact Section -->
+    <div id="contact-section" class="contact-section">
+      <div class="contact-content">
+        <h2 class="section-title">Contact Us</h2>
+        <p align="center">If you have any questions or need assistance, don't hesitate to reach out to us! 😊</p>
+        <p align="center">Email: contact@fitzone.com</p>
+        <p align="center">Phone: +123 456 7890</p>
+      </div>
+      <div class="contact-image d-flex justify-content-center align-items-center">
+        <img src="Screenshot 2025-04-12 202222.png" alt="Contact Image" class="img-fluid" style="width: 100%; height: 100%; object-fit: cover;" />
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2025 FitZone. All rights reserved.</p>
+  </footer>
+
+  <script>
+    // Logo Popup
+    function showLogoPopup() {
+      const popup = document.getElementById('logoPopup');
+      popup.style.display = 'block';
+      setTimeout(() => {
+        popup.style.display = 'none';
+      }, 10000);
+    }
+
+    // Account Modal
+    function openAccountModal() {
+      document.getElementById('accountModal').style.display = 'block';
+    }
+
+    function closeAccountModal() {
+      document.getElementById('accountModal').style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+      const modal = document.getElementById('accountModal');
+      if (event.target == modal) {
+        modal.style.display = 'none';
+      }
+    }
+
+    // Search functionality
+    function performSearch() {
+      const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+      if (searchTerm) {
+        alert('Search for: ' + searchTerm);
+      }
+    }
+
+    // Smooth scroll to section
+    function scrollToSection(sectionId) {
+      const element = document.getElementById(sectionId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+
+    // Update cart count
+    function updateCartCount() {
+      const cart = JSON.parse(localStorage.getItem('cart')) || [];
+      const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+      document.getElementById('cartCount').textContent = totalItems;
+    }
+
+    // Initialize on page load
+    window.onload = function() {
+      updateCartCount();
+    };
+  </script>
+</body>
+</html>
