@@ -1,430 +1,551 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>FitZone - Home</title>
-  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet"/>
-  <style>
-    :root { 
-      --topbar-height: 60px; 
-    }
-    
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #fff;
-      color: #000;
-      padding-top: calc(30px + var(--topbar-height));
-    }
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>FitZone - Home</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet"/>
+<style>
+:root{
+  --topbar-height:60px;
+}
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+body{
+  font-family:'Comic Sans MS',cursive;
+  background-color:#000;
+  color:#fff;
+  padding-top:calc(30px + var(--topbar-height));
+  letter-spacing:1px;
+}
 
-    /* Top black navbar */
-    .topbar {
-      position: fixed;
-      top: 30px;
-      left: 0;
-      right: 0;
-      height: var(--topbar-height);
-      background: black;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0 20px;
-      z-index: 1150;
-      border-bottom: 2px solid #000;
-    }
+.topbar{
+position:fixed;
+top:30px;
+left:0;
+right:0;
+height:var(--topbar-height);
+background:black;
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:0 20px;
+z-index:1150;
+border-bottom:2px solid #000;
+}
+.top-logo{
+position:relative;
+top:0;
+left:0;
+transform:none;
+width:50px;
+height:50px;
+border-radius:50%;
+background:#fff;
+display:flex;
+align-items:center;
+justify-content:center;
+border:2px solid #fff;
+box-sizing:border-box;
+padding:0;
+overflow:hidden;
+cursor:pointer;
+transition:all 0.3s ease;
+flex-shrink:0;
+}
+.top-logo img{
+width:100%;
+height:100%;
+object-fit:cover;
+border-radius:50%;
+}
+.brand-section{
+display:flex;
+align-items:center;
+gap:15px;
+}
+.brand-name{
+font-size:1.5rem;
+font-weight:bold;
+color:#fff;
+letter-spacing:1px;
+font-family:'Comic Sans MS',cursive;
+}
+.logo-popup{
+  position:fixed!important;
+  top:50%!important;
+  left:50%!important;
+  transform:translate(-50%,-50%) scale(3)!important;
+  width:150px!important;
+  height:150px!important;
+  z-index:10000!important;
+}
+.overlay{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.7);
+  z-index:9999;
+  opacity:0;
+  visibility:hidden;
+  transition:opacity 0.3s ease,visibility 0.3s ease;
+}
+.overlay.active{
+  opacity:1;
+  visibility:visible;
+}
+.topbar .nav-right{
+position:relative;
+right:0;
+top:0;
+transform:none;
+display:flex;
+gap:15px;
+align-items:center;
+}
+.topbar .nav-right a{
+  color:#fff;
+  text-decoration:none;
+  font-weight:600;
+  padding:8px 16px;
+  border-radius:4px;
+  transition:all 0.3s;
+  position:relative;
+  letter-spacing:1px;
+  font-family:'Comic Sans MS',cursive;
+  font-size:1.5rem;
+}
 
-    /* Centered round logo */
-    .top-logo {
-      position: absolute;
-      top: -25px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 120px;
-      height: 120px;
-      border-radius: 50%;
-      background: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 1100;
-      border: 3px solid #000;
-      box-sizing: border-box;
-      padding: 0;
-      overflow: hidden;
-      cursor: pointer;
-      transition: all 0.5s ease;
-    }
-    
-    .top-logo img { 
-      width: 100%; 
-      height: 100%; 
-      object-fit: cover; 
-      border-radius: 50%; 
-    }
+.topbar .nav-right a[data-tooltip]:hover::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #333;
+  color: #fff;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  z-index: 1000;
+  pointer-events: none;
+}
 
-    /* Logo popup animation */
-    .logo-popup {
-      position: fixed !important;
-      top: 50% !important;
-      left: 50% !important;
-      transform: translate(-50%, -50%) scale(3) !important;
-      width: 150px !important;
-      height: 150px !important;
-      z-index: 10000 !important;
-    }
+.topbar .nav-right a[data-tooltip].show-tooltip::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #333;
+  color: #fff;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  z-index: 1000;
+  pointer-events: none;
+}
 
-    .overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.7);
-      z-index: 9999;
-      opacity: 0;
-      visibility: hidden;
-      transition: opacity 0.3s ease, visibility 0.3s ease;
-    }
-    
-    .overlay.active { 
-      opacity: 1;
-      visibility: visible;
-    }
+.topbar .nav-right a:hover{
+  background:#333;
+}
+.topbar .nav-right a[href="cart.html"] #cart-count{
+  position:absolute;
+  top:-5px;
+  right:-5px;
+  background:#fff;
+  color:#000;
+  border-radius:50%;
+  padding:2px 6px;
+  font-size:0.7rem;
+  font-weight:bold;
+  min-width:18px;
+  text-align:center;
+  border:1px solid #000;
+}
+.hamburger{
+  display:none;
+}
+.hamburger span{
+  width:25px;
+  height:3px;
+  background:#fff;
+  border-radius:2px;
+  transition:all 0.3s;
+}
 
-    /* Right side nav buttons */
-    .topbar .nav-right {
-      position: absolute;
-      right: 20px;
-      top: 50%;
-      transform: translateY(-50%);
-      display: flex;
-      gap: 15px;
-      align-items: center;
-    }
-    
-    .topbar .nav-right a { 
-      color: #fff; 
-      text-decoration: none; 
-      font-weight: 600; 
-      padding: 8px 16px;
-      border-radius: 4px;
-      transition: all 0.3s;
-      position: relative;
-    }
-    
-    .topbar .nav-right a:hover { 
-      background: #333; 
-    }
-    
-    /* Cart badge */
-    .topbar .nav-right a[href="cart.html"] #cart-count {
-      position: absolute;
-      top: 0;
-      right: 0;
-      transform: translate(25%, -25%);
-      background: #fff;
-      color: #000;
-      border-radius: 3px;
-      padding: 2px 6px;
-      font-size: 0.7rem;
-      font-weight: bold;
-      min-width: 18px;
-      text-align: center;
-      border: 1px solid #000;
-    }
+.hero{
+width:100%;
+min-height:550px;
+background:#000;
+color:#fff;
+display:flex;
+align-items:center;
+justify-content:center;
+gap:50px;
+padding:60px 8%;
+padding-top:100px;
+border-top:2px solid #000;
+}
+.hero-content{
+  flex:1;
+  max-width:600px;
+}
+.hero-content h1{
+  font-size:3rem;
+  line-height:1.2;
+  margin-bottom:20px;
+  letter-spacing:2px;
+  font-family:'Comic Sans MS',cursive;
+}
+.hero-content p{
+  font-size:1.05rem;
+  line-height:1.8;
+  color:#ccc;
+  margin-bottom:25px;
+  letter-spacing:1px;
+  font-family:'Comic Sans MS',cursive;
+}
+.hero-actions{
+  display:flex;
+  gap:15px;
+  flex-wrap:wrap;
+}
+.btn-primary,
+.btn-outline{
+  display:inline-block;
+  padding:10px 22px;
+  border-radius:20px;
+  font-weight:600;
+  text-decoration:none;
+  text-transform:uppercase;
+  font-size:0.9rem;
+  letter-spacing:1px;
+  transition:all 0.25s ease;
+  font-family:'Comic Sans MS',cursive;
+}
+.btn-primary{
+  background:#fff;
+  color:#000;
+}
+.btn-primary:hover{
+  background:#f5f5f5;
+  transform:translateY(-1px);
+}
+.btn-outline{
+  border:1px solid #fff;
+  color:#fff;
+}
+.btn-outline:hover{
+  background:#111;
+  transform:translateY(-1px);
+}
+.hero-media{
+  flex:1;
+  max-width:550px;
+}
+.hero-media img{
+width:100%;
+height:420px;
+object-fit:cover;
+border-radius:20px;
+box-shadow:0 20px 60px rgba(0,0,0,0.7);
+border:3px solid #666;
+}
 
-    /* Hero image */
-    .hero-image {
-      width: 100%;
-      height: 700px;
-      object-fit: cover;
-      margin-bottom: 40px;
-    }
+.categories{
+  background:#050505;
+  color:#fff;
+  padding:50px 8% 60px;
+  border-top:1px solid #111;
+}
+.section-heading{
+  font-size:2rem;
+  margin-bottom:25px;
+  letter-spacing:2px;
+  font-family:'Comic Sans MS',cursive;
+}
+.category-grid{
+  display:flex;
+  flex-wrap:wrap;
+  gap:30px;
+}
+.category-card{
+  flex:1 1 220px;
+  background:linear-gradient(145deg,#121212,#050505);
+  border:1px solid #222;
+  border-radius:20px;
+  padding:18px 18px 20px;
+  text-decoration:none;
+  color:#fff;
+  box-shadow:0 10px 30px rgba(0,0,0,0.6);
+  transition:transform 0.25s ease,box-shadow 0.25s ease,border 0.25s ease;
+}
+.category-card:hover{
+  transform:translateY(-4px);
+  box-shadow:0 18px 45px rgba(0,0,0,0.8);
+  border-color:#444;
+}
+.category-icon{
+  font-size:1.8rem;
+  margin-bottom:10px;
+}
+.category-card h3{
+  font-size:1.1rem;
+  margin-bottom:6px;
+  font-family:'Comic Sans MS',cursive;
+  letter-spacing:1px;
+}
+.category-card p{
+  font-size:0.9rem;
+  color:#ccc;
+  font-family:'Comic Sans MS',cursive;
+  letter-spacing:1px;
+}
 
-    /* About and Contact sections */
-    .about-section, .contact-section {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      padding: 40px;
-      margin: 40px auto;
-      max-width: 1200px;
-    }
+.info-section{
+  background:#000;
+  padding:40px 8% 30px;
+  border-top:1px solid #111;
+}
+.info-grid{
+  display:flex;
+  gap:30px;
+  max-width:1200px;
+  margin:0 auto;
+}
+.info-card{
+  flex:1;
+  background:#000;
+  border-radius:20px;
+  padding:40px;
+  border:3px solid #666;
+  transition:transform 0.3s ease;
+}
 
-    .about-content, .contact-content {
-      width: 50%;
-      padding: 20px;
-    }
+.info-card h2{
+  font-size:2rem;
+  margin-bottom:20px;
+  color:#fff;
+  letter-spacing:1.5px;
+  text-align:center;
+  font-family:'Comic Sans MS',cursive;
+}
+.info-card p{
+  font-size:1.05rem;
+  line-height:1.8;
+  color:#ddd;
+  font-family:'Comic Sans MS',cursive;
+  letter-spacing:1px;
+}
+.info-card strong{
+  color:#fff;
+  font-weight:600;
+  font-family:'Comic Sans MS',cursive;
+  letter-spacing:1px;
+}
 
-    .about-image, .contact-image {
-      width: 50%;
-      padding: 20px;
-    }
+@media (max-width:768px){
+  body{
+    padding-top:120px;
+  }
+  .topbar{
+    position:fixed;
+    top:30px;
+    padding:10px 20px;
+  }
+  .brand-section{
+    gap:10px;
+  }
+  .brand-name{
+    font-size:1.2rem;
+  }
+  .top-logo{
+    width:50px;
+    height:50px;
+  }
+  .hamburger{
+    display:none;
+  }
+  .topbar .nav-right{
+    position:static;
+    right:auto;
+    width:auto;
+    height:auto;
+    background:transparent;
+    flex-direction:row;
+    padding:0;
+    gap:10px;
+    transition:none;
+    border-left:none;
+  }
+  .topbar .nav-right.active{
+    right:auto;
+  }
+  .topbar .nav-right a{
+    width:auto;
+    text-align:center;
+    padding:8px 12px;
+    border-radius:8px;
+    position:relative;
+    font-size:1.3rem;
+  }
+  .topbar .nav-right a[href="cart.html"] #cart-count{
+    position:absolute;
+    top:-5px;
+    right:-5px;
+    display:inline-block;
+    margin-left:0;
+    background:#fff;
+    color:#000;
+    border-radius:50%;
+    padding:2px 6px;
+    font-size:0.7rem;
+    font-weight:bold;
+    min-width:18px;
+    text-align:center;
+    border:1px solid #000;
+  }
 
-    .about-image img, .contact-image img {
-      width: 100%;
-      height: auto;
-      border-radius: 10px;
-    }
+  .hero{
+    flex-direction:column;
+    text-align:center;
+    padding:40px 6%;
+  }
+  .hero-media img{
+    height:280px;
+  }
+  .hero-actions{
+    justify-content:center;
+  }
 
-    .section-title {
-      font-size: 2.5rem;
-      font-weight: bold;
-      margin-bottom: 15px;
-    }
+  .category-grid{
+    flex-direction:column;
+  }
 
-    /* Footer */
-    footer {
-      background-color: #000;
-      padding: 30px 20px;
-      text-align: center;
-      color: #fff;
-      border-top: 2px solid #000;
-    }
-
-    /* Responsive */
-    @media (max-width: 768px) {
-      body {
-        padding-top: 120px;
-      }
-
-      .topbar {
-        flex-direction: column;
-        height: auto;
-        padding: 10px;
-      }
-
-      .top-logo {
-        position: relative;
-        top: 0;
-        left: 0;
-        transform: none;
-        margin-bottom: 10px;
-        width: 80px;
-        height: 80px;
-      }
-
-      .topbar .nav-right {
-        position: static;
-        transform: none;
-        margin-top: 10px;
-      }
-
-      .hero-image {
-        height: 400px;
-      }
-
-      .about-content, .contact-content,
-      .about-image, .contact-image {
-        width: 100%;
-      }
-
-      .section-title {
-        font-size: 2rem;
-      }
-    }
-  </style>
+  .info-grid{
+    flex-direction:column;
+    flex-direction:column;
+    gap:25px;
+  }
+  .info-card{
+    padding:30px 25px;
+  }
+  .info-card h2{
+    font-size:1.5rem;
+  }
+}
+</style>
 </head>
 <body>
-  <div class="overlay" id="overlay"></div>
+<div class="overlay" id="overlay"></div>
 
-  <!-- Top Navigation Bar -->
-  <div class="topbar">
-    <div class="top-logo" id="topLogo" onclick="showLogoPopup()">
-      <img src="Fitzone.png" alt="FitZone Logo">
-    </div>
-    <div class="nav-right">
-      <a href="index.html">Home</a>
-      <a href="catalogue.html">Catalogue</a>
-      <a href="cart.html">
-        Cart
-        <span id="cart-count">0</span>
-      </a>
-    </div>
-  </div>
+<div class="topbar">
+<div class="brand-section">
+<div class="top-logo" id="topLogo">
+<img src="Fitzone.png" alt="FitZone Logo">
+</div>
+<div class="brand-name">FitZone</div>
+</div>
 
-  <!-- Hero Image -->
-  <img src="Hero.png" alt="FitZone Hero" class="hero-image">
+<div class="nav-right" id="navMenu">
+<a href="catalogue.html" data-tooltip="Products"><i class="fas fa-cubes"></i></a>
+<a href="cart.html" data-tooltip="Cart"><i class="fas fa-shopping-cart"></i><span id="cart-count">0</span></a>
+</div>
+</div>
 
-  <!-- About Section -->
-  <div class="about-section">
-    <div class="about-image">
-      <img src="Screenshot 2025-04-12 201507.png" alt="About FitZone">
-    </div>
-    <div class="about-content">
-      <h3 class="section-title">About FitZone</h3>
-      <p>
-        FitZone is a one-stop shop for all your fitness needs. From gym equipment to supplements, 
-        we provide top-quality products to help you achieve your fitness goals 💪🏼. Our mission 
-        is to inspire and support you in your fitness journey. Whether you're a beginner or a pro, 
-        FitZone has everything you need 🏋️‍♂️. Join the FitZone community today and take the first 
-        step toward a healthier, stronger you! 🌟
-      </p>
+<section class="hero">
+  <div class="hero-content">
+    <h1>Train Hard. Shop Smart.</h1>
+    <p>Premium gym equipment, supplements, and accessories to power your workouts and transform your fitness journey.</p>
+    <div class="hero-actions">
+      <a href="catalogue.html" class="btn-primary">Shop Now</a>
+      <a href="#about" class="btn-outline">Learn More</a>
     </div>
   </div>
+  <div class="hero-media">
+    <img src="Home.jpg" alt="FitZone Gym Hero">
+  </div>
+</section>
 
-  <!-- Contact Section -->
-  <div class="contact-section">
-    <div class="contact-content">
-      <h2 class="section-title">Contact Us</h2>
-      <p>If you have any questions or need assistance, don't hesitate to reach out to us! 😊</p>
+<section class="info-section" id="about">
+  <div class="info-grid">
+    <div class="info-card">
+      <h2>About Us</h2>
+      <p>FitZone is your one-stop gym store for premium equipment, trusted supplements, and workout essentials.From home gym setups to professional training gear, we help athletes and beginners achieve their fitness goals with quality products you can trust.</p>
+    </div>
+    
+    <div class="info-card">
+      <h2>Contact Us</h2>
+      <p>Questions about products, orders, or shipping? Our team is here to help you 24/7.</p>
       <p><strong>Email:</strong> contact@fitzone.com</p>
       <p><strong>Phone:</strong> +123 456 7890</p>
     </div>
-    <div class="contact-image">
-      <img src="Screenshot 2025-04-12 202222.png" alt="Contact FitZone">
-    </div>
   </div>
+</section>
 
-  <!-- Footer -->
-  <footer>
-    <p>&copy; 2025 FitZone. All rights reserved.</p>
-  </footer>
+<script>
+function toggleMenu(){
+}
 
-  <script>
-    // Logo Popup Animation
-    function showLogoPopup() {
-      const logo = document.getElementById('topLogo');
-      const overlay = document.getElementById('overlay');
+function showLogoPopup(){
+  const logo=document.getElementById('topLogo');
+  const overlay=document.getElementById('overlay');
+  logo.classList.add('logo-popup');
+  overlay.classList.add('active');
+  setTimeout(()=>{
+    logo.classList.remove('logo-popup');
+    overlay.classList.remove('active');
+  },10000);
+}
+
+function updateCartCount(){
+  const cart=JSON.parse(localStorage.getItem('cart'))||[];
+  const totalItems=cart.reduce((sum,item)=>sum+item.quantity,0);
+  document.getElementById('cart-count').textContent=totalItems;
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  const tooltipLinks = document.querySelectorAll('.nav-right a[data-tooltip]');
+  
+  tooltipLinks.forEach(link => {
+    link.addEventListener('touchstart', function(e) {
+      e.preventDefault();
       
-      logo.classList.add('logo-popup');
-      overlay.classList.add('active');
+      tooltipLinks.forEach(l => l.classList.remove('show-tooltip'));
+      
+      this.classList.add('show-tooltip');
       
       setTimeout(() => {
-        logo.classList.remove('logo-popup');
-        overlay.classList.remove('active');
-      }, 10000);
-    }
-
-    // Update cart count
-    function updateCartCount() {
-      const cart = JSON.parse(localStorage.getItem('cart')) || [];
-      const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-      document.getElementById('cart-count').textContent = totalItems;
-    }
-
-    window.onload = function() {
-      updateCartCount();
-    };
-  </script>
-</body>
-</html>
-
-    <!-- Hero Section -->
-    <div class="container-fluid p-0">
-      <div class="hero-container" id="home-section">
-        <img src="Hero.png" alt="Hero Image" class="hero-image" />
-        <div class="hero-text">
-          <h1 class="display-4">Welcome to FitZone</h1><br />
-          <p class="lead">Explore our collection of fitness products and start your fitness journey today!</p><br />
-        </div>
-      </div>
-    </div>
-
-    <!-- About Section -->
-    <div id="about-section" class="about-section mt-5">
-      <div class="about-image d-flex justify-content-center align-items-center">
-        <img src="Screenshot 2025-04-12 201507.png" alt="About Image" class="img-fluid" />
-      </div>
-    <!-- Hero Section -->
-    <div class="hero-container">
-      <img src="Hero.png" alt="Hero Image" class="hero-image" />
-      <div class="hero-text">
-        <h1 class="display-4">Welcome to FitZone</h1><br />
-        <p class="lead">Explore our collection of fitness products and start your fitness journey today!</p><br />
-      </div>
-    </div>
-
-    <!-- About Section -->
-    <div id="about-section" class="about-section">
-      <div class="about-image d-flex justify-content-center align-items-center">
-        <img src="Screenshot 2025-04-12 201507.png" alt="About Image" class="img-fluid" style="width: 100%; height: 100%; object-fit: cover;" />
-      </div>
-      <div class="about-content">
-        <h3 class="section-title">About FitZone</h3>
-        <p>
-          FitZone is a one-stop shop for all your fitness needs. From gym equipment to supplements, we provide top-quality products to help you achieve your fitness goals💪🏼. Our mission is to inspire and support you in your fitness journey. Whether you're a beginner or a pro, FitZone has everything you need🏋️‍♂️. Join the FitZone community today and take the first step toward a healthier, stronger you!🌟
-        </p>
-      </div>
-    </div>
-
-    <!-- Contact Section -->
-    <div id="contact-section" class="contact-section">
-      <div class="contact-content">
-        <h2 class="section-title">Contact Us</h2>
-        <p align="center">If you have any questions or need assistance, don't hesitate to reach out to us! 😊</p>
-        <p align="center">Email: contact@fitzone.com</p>
-        <p align="center">Phone: +123 456 7890</p>
-      </div>
-      <div class="contact-image d-flex justify-content-center align-items-center">
-        <img src="Screenshot 2025-04-12 202222.png" alt="Contact Image" class="img-fluid" style="width: 100%; height: 100%; object-fit: cover;" />
-      </div>
-    </div>
-  </div>
-
-  <footer>
-    <p>&copy; 2025 FitZone. All rights reserved.</p>
-  </footer>
-
-  <script>
-    // Logo Popup
-    function showLogoPopup() {
-      const popup = document.getElementById('logoPopup');
-      popup.style.display = 'block';
+        this.classList.remove('show-tooltip');
+      }, 2000);
+    });
+    
+    link.addEventListener('touchend', function(e) {
       setTimeout(() => {
-        popup.style.display = 'none';
-      }, 10000);
-    }
+        window.location.href = this.getAttribute('href');
+      }, 100);
+    });
+  });
+});
 
-    // Account Modal
-    function openAccountModal() {
-      document.getElementById('accountModal').style.display = 'block';
-    }
+window.onload=function(){
+  updateCartCount();
+  window.scrollTo(0, 0);
+};
 
-    function closeAccountModal() {
-      document.getElementById('accountModal').style.display = 'none';
-    }
+if (history.scrollRestoration) {
+  history.scrollRestoration = 'manual';
+}
 
-    window.onclick = function(event) {
-      const modal = document.getElementById('accountModal');
-      if (event.target == modal) {
-        modal.style.display = 'none';
-      }
-    }
-
-    // Search functionality
-    function performSearch() {
-      const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-      if (searchTerm) {
-        alert('Search for: ' + searchTerm);
-      }
-    }
-
-    // Smooth scroll to section
-    function scrollToSection(sectionId) {
-      const element = document.getElementById(sectionId);
-      if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
-      }
-    }
-
-    // Update cart count
-    function updateCartCount() {
-      const cart = JSON.parse(localStorage.getItem('cart')) || [];
-      const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-      document.getElementById('cartCount').textContent = totalItems;
-    }
-
-    // Initialize on page load
-    window.onload = function() {
-      updateCartCount();
-    };
-  </script>
+document.getElementById('topLogo').onclick = showLogoPopup;
+</script>
 </body>
 </html>
