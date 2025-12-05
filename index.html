@@ -8,6 +8,7 @@
 <style>
 :root{
   --topbar-height:60px;
+  --disclaimer-height:120px;
 }
 *{
   margin:0;
@@ -18,13 +19,13 @@ body{
   font-family:'Comic Sans MS',cursive;
   background-color:#000;
   color:#fff;
-  padding-top:calc(30px + var(--topbar-height));
+  padding-top:calc(70px + var(--topbar-height));
   letter-spacing:1px;
 }
 
 .topbar{
 position:fixed;
-top:30px;
+top:var(--disclaimer-height);
 left:0;
 right:0;
 height:var(--topbar-height);
@@ -354,11 +355,12 @@ border:3px solid #666;
 
 @media (max-width:768px){
   body{
-    padding-top:120px;
+    /* Leave 120px above topbar for disclaimer in mobile */
+    padding-top:calc(var(--disclaimer-height) + var(--topbar-height));
   }
   .topbar{
     position:fixed;
-    top:30px;
+    top:var(--disclaimer-height);
     padding:10px 20px;
   }
   .brand-section{
@@ -445,6 +447,10 @@ border:3px solid #666;
 </style>
 </head>
 <body>
+
+<div style="background:#ff4444;color:#fff;text-align:center;padding:15px 0;font-weight:bold;letter-spacing:1px;position:fixed;top:0;left:0;right:0;z-index:1200;font-family:'Comic Sans MS',cursive;height:80px;line-height:20px;">
+  This is a fake website for demonstration purposes only. No real products or services are offered.
+</div>
 <div class="overlay" id="overlay"></div>
 
 <div class="topbar">

@@ -18,6 +18,7 @@
             --border-light: #333333;
             --text-primary: #ffffff;
             --text-secondary: #cccccc;
+            --disclaimer-height: 40px;
         }
 
         *{
@@ -31,7 +32,7 @@
             background: var(--bg-primary);
             color: var(--text-primary);
             padding-left: var(--sidebar-width);
-            padding-top: 140px;
+            padding-top: calc(140px + var(--disclaimer-height));
             min-height: 100vh;
             letter-spacing: 1px;
         }
@@ -136,7 +137,7 @@
 
         .topbar {
             position: fixed;
-            top: 0;
+            top: var(--disclaimer-height);
             left: var(--sidebar-width);
             right: 0;
             height: 140px;
@@ -439,7 +440,7 @@
         @media (max-width: 768px) {
             body {
                 padding-left: 0;
-                padding-top: 140px;
+                padding-top: calc(140px + var(--disclaimer-height));
             }
 
             .sidebar {
@@ -448,7 +449,7 @@
 
             .topbar {
                 left:2px;
-                top:30px;
+                top: var(--disclaimer-height);
                 height: auto;
                 padding: 10px 16px;
                 flex-direction: column;
